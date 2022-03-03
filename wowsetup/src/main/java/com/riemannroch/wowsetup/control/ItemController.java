@@ -24,7 +24,7 @@ public class ItemController {
         this.characterService = characterService;
     }
 
-    public ResponseEntity<Object> notFound(){
+    public static ResponseEntity<Object> notFound(){
         return new ResponseEntity<>("Item not found!",HttpStatus.NOT_FOUND);
     }
 
@@ -64,9 +64,18 @@ public class ItemController {
         if (itemModelOptional.isEmpty()){
             return notFound();
         }
+        ItemModel item = itemModelOptional.get();
         List<Object> response = new ArrayList<>();
-        response.add(itemModelOptional);
-        response.add(characterService.findAll());
+        response.add(item);
+        List<CharacterModel> own = new ArrayList<>();
+        List<CharacterModel> doNotOwn = new ArrayList<>();
+        for (CharacterModel character: characterService.findAll()){
+            if (character.getItemsList().contains(item)){
+                own.add(character);
+            } else doNotOwn.add(character);
+        }
+        response.add(own);
+        response.add(doNotOwn);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
