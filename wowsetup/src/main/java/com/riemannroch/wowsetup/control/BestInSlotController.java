@@ -1,6 +1,9 @@
 package com.riemannroch.wowsetup.control;
 
 import com.riemannroch.wowsetup.model.CharacterModel;
+import com.riemannroch.wowsetup.model.EquivalencePointSystemModel;
+import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.model.Slot;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
 import com.riemannroch.wowsetup.service.ItemService;
@@ -22,16 +25,17 @@ public class BestInSlotController {
     final ItemService itemService;
     final EquivalencePointSystemService equivalencePointSystemService;
 
-    public BestInSlotController(CharacterService characterService, ItemService itemService, EquivalencePointSystemService equivalencePointSystemService) {
+    public BestInSlotController(CharacterService characterService, ItemService itemService,
+                                EquivalencePointSystemService equivalencePointSystemService) {
         this.characterService = characterService;
         this.itemService = itemService;
         this.equivalencePointSystemService = equivalencePointSystemService;
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllEquivalencePointSystemsForCharacter(@PathVariable("name") String name){
+    public ResponseEntity<Object> getAllEquivalencePointSystemsForCharacter(@PathVariable("name") String name) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
-        if(characterModelOptional.isEmpty()){
+        if (characterModelOptional.isEmpty()) {
             return CharacterController.notFound();
         }
         List<Object> response = new ArrayList<>();
@@ -40,5 +44,49 @@ public class BestInSlotController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/{idEquivalencePointSystem}")
+    public ResponseEntity<Object> getBestInSlotList(
+            @PathVariable("name") String name,
+            @PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
+        Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
+        if (characterModelOptional.isEmpty()) {
+            return CharacterController.notFound();
+        }
+        Optional<EquivalencePointSystemModel> equivalencePointSystemModelOptional =
+                equivalencePointSystemService.findById(idEquivalencePointSystem);
+        if (equivalencePointSystemModelOptional.isEmpty()) {
+            return EquivalencePointSystemController.notFound();
+        }
+        CharacterModel character = characterModelOptional.get();
+        EquivalencePointSystemModel eps = equivalencePointSystemModelOptional.get();
 
+        List<ItemModel> bestInSlotList = new ArrayList<>();
+
+        for (Slot slot : Slot.values()) {
+            List<ItemModel> itemsInSlot = itemService.findBySlot(slot);
+            ItemModel bestInSlot = new ItemModel();
+            bestInSlot.setSlot(slot);
+            ItemModel secondBestInSlot = new ItemModel();
+            secondBestInSlot.setSlot(slot);
+            double bestInSlotEquivalencePoints = 0;
+            for (ItemModel item : itemsInSlot) {
+                if (item.equivalencePoints(eps) > bestInSlotEquivalencePoints) {
+                    secondBestInSlot = bestInSlot;
+                    bestInSlot = item;
+                    bestInSlotEquivalencePoints = item.equivalencePoints(eps);
+                }
+            }
+            bestInSlotList.add(bestInSlot);
+            if (slot == Slot.RING || slot == Slot.TRINKET){
+                bestInSlotList.add(secondBestInSlot);
+            }
+        }
+
+        List<Object> response = new ArrayList<>();
+        response.add(character);
+        response.add(eps);
+        response.add(bestInSlotList);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

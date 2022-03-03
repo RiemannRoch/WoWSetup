@@ -1,6 +1,7 @@
 package com.riemannroch.wowsetup.service;
 
 import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.model.Slot;
 import com.riemannroch.wowsetup.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +30,9 @@ public class ItemService {
 
     public void delete(ItemModel itemModel){
         this.itemRepository.delete(itemModel);
+    }
+
+    public List<ItemModel> findBySlot(Slot slot) {
+        return this.itemRepository.findBySlot(slot);
     }
 }

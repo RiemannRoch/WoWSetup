@@ -20,7 +20,7 @@ public class EquivalencePointSystemController {
     }
 
     public static ResponseEntity<Object> notFound(){
-        return new ResponseEntity<>("Equivalence Point System not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Equivalence Point System not found!", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping
