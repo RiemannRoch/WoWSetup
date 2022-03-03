@@ -19,7 +19,7 @@ public class EquivalencePointSystemController {
         this.equivalencePointSystemService = equivalencePointSystemService;
     }
 
-    public ResponseEntity<Object> notFound(){
+    public static ResponseEntity<Object> notFound(){
         return new ResponseEntity<>("Equivalence Point System not found", HttpStatus.NOT_FOUND);
     }
 
