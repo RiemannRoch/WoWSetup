@@ -3,6 +3,7 @@ package com.riemannroch.wowsetup.model;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "TB_ITEM")
@@ -31,6 +32,12 @@ public class ItemModel implements Serializable {
     private int spellHaste;
     private int resilience;
 
+    //@OneToMany(mappedBy = "item")
+    //private Set<ItemEquivalencePoints> itemEquivalencePoints;
+
+    @ManyToMany(mappedBy = "itemsList")
+    private List<CharacterModel> ownersList;
+
     public double equivalencePoints(EquivalencePointSystemModel equivalencePointSystemModel){
         return intellect * equivalencePointSystemModel.getIntellectWeight() +
                 stamina * equivalencePointSystemModel.getStaminaWeight() +
@@ -46,6 +53,22 @@ public class ItemModel implements Serializable {
                 haste * equivalencePointSystemModel.getHasteWeight() +
                 spellHaste * equivalencePointSystemModel.getSpellHasteWeight();
     }
+
+    public List<CharacterModel> getOwnersList() {
+        return ownersList;
+    }
+
+    public void setOwnersList(List<CharacterModel> ownersList) {
+        this.ownersList = ownersList;
+    }
+
+//    public Set<ItemEquivalencePoints> getItemEquivalencePoints() {
+//        return itemEquivalencePoints;
+//    }
+//
+//    public void setItemEquivalencePoints(Set<ItemEquivalencePoints> itemEquivalencePoints) {
+//        this.itemEquivalencePoints = itemEquivalencePoints;
+//    }
 
     public long getIdItem() {
         return idItem;

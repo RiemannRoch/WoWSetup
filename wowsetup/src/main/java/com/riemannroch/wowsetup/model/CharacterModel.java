@@ -17,14 +17,19 @@ public class CharacterModel implements Serializable {
 
     private String name;
 
-    @OneToMany (targetEntity = ItemModel.class)
-    private List itemsList;
+    @ManyToMany
+    @JoinTable(
+            name = "character_owns_item",
+            joinColumns = @JoinColumn(name = "character_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
+    private List<ItemModel> itemsList;
 
-    public List getItemsList() {
+    public List<ItemModel> getItemsList() {
         return itemsList;
     }
 
-    public void setItemsList(List itemsList) {
+    public void setItemsList(List<ItemModel> itemsList) {
         this.itemsList = itemsList;
     }
 

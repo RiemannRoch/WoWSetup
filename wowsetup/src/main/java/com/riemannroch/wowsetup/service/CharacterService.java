@@ -4,6 +4,7 @@ import com.riemannroch.wowsetup.model.CharacterModel;
 import com.riemannroch.wowsetup.repository.CharacterRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ public class CharacterService {
         return this.characterRepository.findAll();
     }
 
+    @Transactional
     public CharacterModel save(CharacterModel characterModel){
         return this.characterRepository.save(characterModel);
     }
@@ -27,6 +29,7 @@ public class CharacterService {
         return this.characterRepository.findByName(name);
     }
 
+    @Transactional
     public void deleteByName(String name) {
         characterRepository.deleteByName(name);
     }

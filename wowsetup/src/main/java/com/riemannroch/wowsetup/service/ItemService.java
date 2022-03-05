@@ -5,6 +5,7 @@ import com.riemannroch.wowsetup.model.Slot;
 import com.riemannroch.wowsetup.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ public class ItemService {
         return this.itemRepository.findAll();
     }
 
+    @Transactional
     public ItemModel save(ItemModel itemModel){
         return this.itemRepository.save(itemModel);
     }
@@ -28,6 +30,7 @@ public class ItemService {
         return this.itemRepository.findById(id);
     }
 
+    @Transactional
     public void delete(ItemModel itemModel){
         this.itemRepository.delete(itemModel);
     }

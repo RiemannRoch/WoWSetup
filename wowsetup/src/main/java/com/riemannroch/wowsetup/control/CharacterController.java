@@ -4,6 +4,8 @@ import com.riemannroch.wowsetup.model.CharacterModel;
 import com.riemannroch.wowsetup.model.ItemModel;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.ItemService;
+import com.riemannroch.wowsetup.view.character.CharacterView;
+import com.riemannroch.wowsetup.view.item.ItemView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,17 +28,17 @@ public class CharacterController {
     public static ResponseEntity<Object> notFound() {
         return new ResponseEntity<>("Character not found!", HttpStatus.NOT_FOUND);
     }
-
+    // Tested
     @GetMapping
     public ResponseEntity<Object> homePage() {
-        return new ResponseEntity<>(characterService.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(CharacterView.listOf(characterService.findAll()), HttpStatus.OK);
     }
-
+    //Tested
     @PostMapping
     public ResponseEntity<Object> addCharacter(@RequestBody CharacterModel characterModel) {
-        return new ResponseEntity<>(characterService.save(characterModel), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CharacterView(characterService.save(characterModel)), HttpStatus.CREATED);
     }
-
+    //Tested
     @GetMapping("/{name}")
     public ResponseEntity<Object> showCharacter(@PathVariable("name") String name) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
@@ -44,39 +46,54 @@ public class CharacterController {
             return notFound();
         }
         CharacterModel character = characterModelOptional.get();
-        List<Object> response = new ArrayList<>();
-        response.add(character);
 
-        List<ItemModel> notOwned = new ArrayList<>();
+
+        List<Object> response = new ArrayList<>();
+
+        response.add(new CharacterView(character));
+
+        List<ItemView> owned = ItemView.listOf(character.getItemsList());
+        response.add(owned);
+
+        /*List<ItemView> notOwned = new ArrayList<>();
         for (ItemModel item : itemService.findAll()) {
             if (!character.getItemsList().contains(item)) {
-                notOwned.add(item);
+                notOwned.add(new ItemView(item));
             }
         }
-        response.add(notOwned);
+        response.add(notOwned);*/
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    //Tested
     @PutMapping("/{name}")
-    public ResponseEntity<Object> updateCharacter(@PathVariable("name") String oldName, @RequestBody CharacterModel characterModel) {
+    public ResponseEntity<Object> updateCharacter(@PathVariable("name") String oldName, @RequestBody String newName) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(oldName);
         if (characterModelOptional.isEmpty()) {
             return notFound();
         }
-        characterModel.setIdCharacter(characterModelOptional.get().getIdCharacter());
-        return new ResponseEntity<>(characterService.save(characterModel), HttpStatus.OK);
-    }
+        CharacterModel characterModel = characterModelOptional.get();
 
+        characterModel.setName(newName);
+        return new ResponseEntity<>(new CharacterView(characterService.save(characterModel)), HttpStatus.OK);
+    }
+    //Tested
     @DeleteMapping("/{name}")
     public ResponseEntity<Object> deleteCharacter(@PathVariable("name") String name) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
         if (characterModelOptional.isEmpty()) {
             return notFound();
         }
-        characterService.delete(characterModelOptional.get());
+        CharacterModel character = characterModelOptional.get();
+
+        for (ItemModel item: character.getItemsList()){
+            item.getOwnersList().remove(character);
+            itemService.save(item);
+        }
+
+        characterService.delete(character);
         return new ResponseEntity<>("Character deleted successfully!", HttpStatus.OK);
     }
-
+    //Tested
     @PostMapping("/{name}/{idItem}")
     public ResponseEntity<Object> addItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
@@ -91,18 +108,20 @@ public class CharacterController {
         CharacterModel character = characterModelOptional.get();
         ItemModel item = itemModelOptional.get();
 
-        List itemsList = character.getItemsList();
+        List<ItemModel> itemsList = character.getItemsList();
         if (itemsList.contains(item)) {
+            assert item.getOwnersList().contains(character);
             return new ResponseEntity<>("The item " + item.getName() + " is already owned by " +
                     character.getName(), HttpStatus.CONFLICT);
         }
         itemsList.add(item);
-        character.setItemsList(itemsList);
+        item.getOwnersList().add(character);
         characterService.save(character);
+        itemService.save(item);
         return new ResponseEntity<>("The item " + item.getName() + " is now owned by " +
                 character.getName(), HttpStatus.CREATED);
     }
-
+    //Tested
     @DeleteMapping("/{name}/{idItem}")
     public ResponseEntity<Object> removeItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
@@ -116,15 +135,16 @@ public class CharacterController {
         CharacterModel character = characterModelOptional.get();
         ItemModel item = itemModelOptional.get();
 
-        List itemsList = character.getItemsList();
+        List<ItemModel> itemsList = character.getItemsList();
         if (itemsList.contains(item)) {
+            assert item.getOwnersList().contains(character);
             itemsList.remove(item);
-            character.setItemsList(itemsList);
+            item.getOwnersList().remove(character);
+            itemService.save(item);
             characterService.save(character);
             return new ResponseEntity<>("The item " + item.getName() + " is no more owned by " +
                     character.getName(), HttpStatus.OK);
         }
-        character.getItemsList().add(item);
         return new ResponseEntity<>("The item " + item.getName() + " is not owned by " +
                 character.getName(), HttpStatus.CONFLICT);
     }

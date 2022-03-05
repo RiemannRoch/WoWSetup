@@ -29,6 +29,17 @@ public class EquivalencePointSystemModel implements Serializable {
     private double hasteWeight;
     private double spellHasteWeight;
 
+//    @OneToMany(mappedBy = "eps")
+//    private Set<ItemEquivalencePoints> itemEquivalencePoints;
+//
+//    public Set<ItemEquivalencePoints> getItemEquivalencePoints() {
+//        return itemEquivalencePoints;
+//    }
+//
+//    public void setItemEquivalencePoints(Set<ItemEquivalencePoints> itemEquivalencePoints) {
+//        this.itemEquivalencePoints = itemEquivalencePoints;
+//    }
+
     public long getIdEquivalencePointSystem() {
         return idEquivalencePointSystem;
     }
