@@ -3,7 +3,7 @@ package com.riemannroch.wowsetup.control;
 import com.riemannroch.wowsetup.model.CharacterModel;
 import com.riemannroch.wowsetup.model.EquivalencePointSystemModel;
 import com.riemannroch.wowsetup.model.ItemModel;
-import com.riemannroch.wowsetup.model.Slot;
+import com.riemannroch.wowsetup.model.SlotEnum;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
 import com.riemannroch.wowsetup.service.ItemService;
@@ -62,12 +62,12 @@ public class BestInSlotController {
 
         List<ItemModel> bestInSlotList = new ArrayList<>();
 
-        for (Slot slot : Slot.values()) {
-            List<ItemModel> itemsInSlot = itemService.findBySlot(slot);
+        for (SlotEnum slotEnum : SlotEnum.values()) {
+            List<ItemModel> itemsInSlot = itemService.findBySlot(slotEnum);
             ItemModel bestInSlot = new ItemModel();
-            bestInSlot.setSlot(slot);
+            bestInSlot.setSlot(slotEnum);
             ItemModel secondBestInSlot = new ItemModel();
-            secondBestInSlot.setSlot(slot);
+            secondBestInSlot.setSlot(slotEnum);
             double bestInSlotEquivalencePoints = 0;
             for (ItemModel item : itemsInSlot) {
                 if (item.equivalencePoints(eps) > bestInSlotEquivalencePoints) {
@@ -77,7 +77,7 @@ public class BestInSlotController {
                 }
             }
             bestInSlotList.add(bestInSlot);
-            if (slot == Slot.RING || slot == Slot.TRINKET){
+            if (slotEnum == SlotEnum.RING || slotEnum == SlotEnum.TRINKET){
                 bestInSlotList.add(secondBestInSlot);
             }
         }

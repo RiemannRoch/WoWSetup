@@ -16,7 +16,7 @@ public class ItemModel implements Serializable {
     private long idItem;
 
     private String name;
-    private Slot slot;
+    private SlotEnum slotEnum;
     private int intellect;
     private int stamina;
     private int agility;
@@ -86,12 +86,12 @@ public class ItemModel implements Serializable {
         this.name = name;
     }
 
-    public Slot getSlot() {
-        return slot;
+    public SlotEnum getSlot() {
+        return slotEnum;
     }
 
-    public void setSlot(Slot slot) {
-        this.slot = slot;
+    public void setSlot(SlotEnum slotEnum) {
+        this.slotEnum = slotEnum;
     }
 
     public int getIntellect() {

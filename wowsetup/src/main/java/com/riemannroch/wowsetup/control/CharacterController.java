@@ -6,6 +6,7 @@ import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.ItemService;
 import com.riemannroch.wowsetup.view.character.CharacterView;
 import com.riemannroch.wowsetup.view.item.ItemView;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +35,9 @@ public class CharacterController {
         return new ResponseEntity<>(CharacterView.listOf(characterService.findAll()), HttpStatus.OK);
     }
     //Tested
+    @Operation(summary = "Insert new character", description = "Insert new character long part")
     @PostMapping
-    public ResponseEntity<Object> addCharacter(@RequestBody CharacterModel characterModel) {
+    public ResponseEntity<CharacterView> addCharacter(@RequestBody CharacterModel characterModel) {
         return new ResponseEntity<>(new CharacterView(characterService.save(characterModel)), HttpStatus.CREATED);
     }
     //Tested

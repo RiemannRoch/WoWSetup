@@ -1,8 +1,7 @@
 package com.riemannroch.wowsetup.view.item;
 
-import com.riemannroch.wowsetup.model.ItemEquivalencePoints;
 import com.riemannroch.wowsetup.model.ItemModel;
-import com.riemannroch.wowsetup.model.Slot;
+import com.riemannroch.wowsetup.model.SlotEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +9,12 @@ import java.util.List;
 public class ItemView {
     private long id;
     private String name;
-    private Slot slot;
+    private SlotEnum slotEnum;
 
     public ItemView(ItemModel itemModel) {
         this.id = itemModel.getIdItem();
         this.name = itemModel.getName();
-        this.slot = itemModel.getSlot();
+        this.slotEnum = itemModel.getSlot();
     }
 
     public static List<ItemView> listOf(List<ItemModel> itemModelList) {
@@ -42,11 +41,11 @@ public class ItemView {
         this.name = name;
     }
 
-    public Slot getSlot() {
-        return slot;
+    public SlotEnum getSlot() {
+        return slotEnum;
     }
 
-    public void setSlot(Slot slot) {
-        this.slot = slot;
+    public void setSlot(SlotEnum slotEnum) {
+        this.slotEnum = slotEnum;
     }
 }

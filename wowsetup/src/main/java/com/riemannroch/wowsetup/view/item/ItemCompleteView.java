@@ -1,7 +1,6 @@
 package com.riemannroch.wowsetup.view.item;
 
 import com.riemannroch.wowsetup.model.ItemModel;
-import com.riemannroch.wowsetup.model.Slot;
 
 public class ItemCompleteView extends ItemView {
     private int intellect;

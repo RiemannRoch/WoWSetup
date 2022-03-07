@@ -1,5 +1,5 @@
 package com.riemannroch.wowsetup.model;
 
-public enum Slot {
+public enum SlotEnum {
     HEAD, NECK, SHOULDER, BACK, CHEST, WRIST, HAND, WAIST, LEGS, FEET, RING, TRINKET, MAIN_HAND, OFF_HAND, TOTEM, RANGED
 }

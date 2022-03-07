@@ -1,10 +1,15 @@
 package com.riemannroch.wowsetup.view.character;
 
 import com.riemannroch.wowsetup.model.CharacterModel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class CharacterView {
     private long id;
     private String name;
@@ -20,21 +25,5 @@ public class CharacterView {
             characterViewList.add(new CharacterView(characterModel));
         }
         return characterViewList;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }
