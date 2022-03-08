@@ -1,11 +1,14 @@
 package com.riemannroch.wowsetup.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "TB_ITEM_EP")
+@Data
 public class ItemEquivalencePoints implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -31,41 +34,4 @@ public class ItemEquivalencePoints implements Serializable {
         this.eps = eps;
         this.equivalencePoints = item.equivalencePoints(eps);
     }
-
-    public ItemEquivalencePoints() {
-    }
-
-    public ItemEquivalencePointsKey getId() {
-        return id;
-    }
-
-    public void setId(ItemEquivalencePointsKey id) {
-        this.id = id;
-    }
-
-    public ItemModel getItem() {
-        return item;
-    }
-
-    public void setItem(ItemModel item) {
-        this.item = item;
-        this.equivalencePoints = this.item.equivalencePoints(this.eps);
-    }
-
-    public EquivalencePointSystemModel getEps() {
-        return eps;
-    }
-
-    public void setEps(EquivalencePointSystemModel eps) {
-        this.eps = eps;
-        this.equivalencePoints = this.item.equivalencePoints(this.eps);
-    }
-
-    public double getEquivalencePoints() {
-        return equivalencePoints;
-    }
-
-    /* public void setEquivalencePoints(double equivalencePoints) {
-        this.equivalencePoints = equivalencePoints;
-    }*/
 }

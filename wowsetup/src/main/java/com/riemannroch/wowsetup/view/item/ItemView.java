@@ -2,10 +2,12 @@ package com.riemannroch.wowsetup.view.item;
 
 import com.riemannroch.wowsetup.model.ItemModel;
 import com.riemannroch.wowsetup.model.SlotEnum;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class ItemView {
     private long id;
     private String name;
@@ -23,29 +25,5 @@ public class ItemView {
             itemViewList.add(new ItemView(itemModel));
         }
         return itemViewList;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public SlotEnum getSlot() {
-        return slotEnum;
-    }
-
-    public void setSlot(SlotEnum slotEnum) {
-        this.slotEnum = slotEnum;
     }
 }
