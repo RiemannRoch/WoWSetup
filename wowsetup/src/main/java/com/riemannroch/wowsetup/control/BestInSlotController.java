@@ -7,6 +7,7 @@ import com.riemannroch.wowsetup.model.SlotEnum;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
 import com.riemannroch.wowsetup.service.ItemService;
+import com.riemannroch.wowsetup.view.character.CharacterView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ public class BestInSlotController {
             return CharacterController.notFound();
         }
         List<Object> response = new ArrayList<>();
-        response.add(characterModelOptional.get());
+        response.add(new CharacterView(characterModelOptional.get()));
         response.add(equivalencePointSystemService.findAll());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -65,9 +66,9 @@ public class BestInSlotController {
         for (SlotEnum slotEnum : SlotEnum.values()) {
             List<ItemModel> itemsInSlot = itemService.findBySlot(slotEnum);
             ItemModel bestInSlot = new ItemModel();
-            bestInSlot.setSlot(slotEnum);
+            bestInSlot.setSlotEnum(slotEnum);
             ItemModel secondBestInSlot = new ItemModel();
-            secondBestInSlot.setSlot(slotEnum);
+            secondBestInSlot.setSlotEnum(slotEnum);
             double bestInSlotEquivalencePoints = 0;
             for (ItemModel item : itemsInSlot) {
                 if (item.equivalencePoints(eps) > bestInSlotEquivalencePoints) {

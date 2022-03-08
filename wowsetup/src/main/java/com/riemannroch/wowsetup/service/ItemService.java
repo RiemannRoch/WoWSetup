@@ -36,6 +36,6 @@ public class ItemService {
     }
 
     public List<ItemModel> findBySlot(SlotEnum slotEnum) {
-        return this.itemRepository.findBySlot(slotEnum);
+        return this.itemRepository.findBySlotEnum(slotEnum);
     }
 }

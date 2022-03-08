@@ -2,6 +2,7 @@ package com.riemannroch.wowsetup.control;
 
 import com.riemannroch.wowsetup.model.CharacterModel;
 import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.request.CharacterRequest;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.ItemService;
 import com.riemannroch.wowsetup.view.character.CharacterView;
@@ -30,20 +31,24 @@ public class CharacterController {
         return new ResponseEntity<>("Character not found!", HttpStatus.NOT_FOUND);
     }
     // Tested
+    @Operation(summary = "Show all characters")
     @GetMapping
-    public ResponseEntity<Object> homePage() {
+    public ResponseEntity<List<CharacterView>> homePage() {
         return new ResponseEntity<>(CharacterView.listOf(characterService.findAll()), HttpStatus.OK);
     }
+
     //Tested
-    @Operation(summary = "Insert new character", description = "Insert new character long part")
+    @Operation(summary = "Insert new character")
     @PostMapping
-    public ResponseEntity<CharacterView> addCharacter(@RequestBody CharacterModel characterModel) {
-        return new ResponseEntity<>(new CharacterView(characterService.save(characterModel)), HttpStatus.CREATED);
+    public ResponseEntity<CharacterView> addCharacter(@RequestBody CharacterRequest characterRequest) {
+        return new ResponseEntity<>(new CharacterView(characterService.save(new CharacterModel(characterRequest))), HttpStatus.CREATED);
     }
-    //Tested
+
+    //Tested; Specify the response object
+    @Operation(summary = "Show the list of items owned by character")
     @GetMapping("/{name}")
-    public ResponseEntity<Object> showCharacter(@PathVariable("name") String name) {
-        Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
+    public ResponseEntity<Object> showCharacter(@RequestBody CharacterRequest characterRequest) {
+        Optional<CharacterModel> characterModelOptional = characterService.findByName(characterRequest.getName());
         if (characterModelOptional.isEmpty()) {
             return notFound();
         }
@@ -66,19 +71,23 @@ public class CharacterController {
         response.add(notOwned);*/
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    //Tested
+
+    //Tested; Specify the response object
+    @Operation(summary = "Rename character")
     @PutMapping("/{name}")
-    public ResponseEntity<Object> updateCharacter(@PathVariable("name") String oldName, @RequestBody String newName) {
+    public ResponseEntity<Object> updateCharacter(@PathVariable("name") String oldName, @RequestBody CharacterRequest characterRequest) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(oldName);
         if (characterModelOptional.isEmpty()) {
             return notFound();
         }
         CharacterModel characterModel = characterModelOptional.get();
 
-        characterModel.setName(newName);
+        characterModel.setName(characterRequest.getName());
         return new ResponseEntity<>(new CharacterView(characterService.save(characterModel)), HttpStatus.OK);
     }
-    //Tested
+
+    //Tested; Specify the response object
+    @Operation(summary = "Delete character")
     @DeleteMapping("/{name}")
     public ResponseEntity<Object> deleteCharacter(@PathVariable("name") String name) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
@@ -95,7 +104,9 @@ public class CharacterController {
         characterService.delete(character);
         return new ResponseEntity<>("Character deleted successfully!", HttpStatus.OK);
     }
-    //Tested
+
+    //Tested; Specify the response object
+    @Operation(summary = "Add an item to a character")
     @PostMapping("/{name}/{idItem}")
     public ResponseEntity<Object> addItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
@@ -123,7 +134,9 @@ public class CharacterController {
         return new ResponseEntity<>("The item " + item.getName() + " is now owned by " +
                 character.getName(), HttpStatus.CREATED);
     }
-    //Tested
+
+    //Tested; Specify the response object
+    @Operation(summary = "Remove an item from a character")
     @DeleteMapping("/{name}/{idItem}")
     public ResponseEntity<Object> removeItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
         Optional<CharacterModel> characterModelOptional = characterService.findByName(name);

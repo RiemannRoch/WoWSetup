@@ -1,5 +1,6 @@
 package com.riemannroch.wowsetup.model;
 
+import com.riemannroch.wowsetup.request.CharacterRequest;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -27,4 +28,10 @@ public class CharacterModel implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
     private List<ItemModel> itemsList;
+
+    public CharacterModel(){}
+
+    public CharacterModel(CharacterRequest characterRequest){
+        this.name = characterRequest.getName();
+    }
 }

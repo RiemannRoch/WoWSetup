@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<ItemModel, Long> {
-    List<ItemModel> findBySlot(SlotEnum slotEnum);
+    List<ItemModel> findBySlotEnum(SlotEnum slotEnum);
 }

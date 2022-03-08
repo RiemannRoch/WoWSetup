@@ -16,7 +16,7 @@ public class ItemView {
     public ItemView(ItemModel itemModel) {
         this.id = itemModel.getIdItem();
         this.name = itemModel.getName();
-        this.slotEnum = itemModel.getSlot();
+        this.slotEnum = itemModel.getSlotEnum();
     }
 
     public static List<ItemView> listOf(List<ItemModel> itemModelList) {
