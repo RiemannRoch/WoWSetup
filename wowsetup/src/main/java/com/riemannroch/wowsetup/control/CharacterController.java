@@ -6,13 +6,13 @@ import com.riemannroch.wowsetup.request.CharacterRequest;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.ItemService;
 import com.riemannroch.wowsetup.view.character.CharacterView;
-import com.riemannroch.wowsetup.view.item.ItemView;
+import com.riemannroch.wowsetup.view.character.CharacterWithItemsView;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +30,12 @@ public class CharacterController {
     public static ResponseEntity<Object> notFound() {
         return new ResponseEntity<>("Character not found!", HttpStatus.NOT_FOUND);
     }
-    // Tested
+
+    public static NotFoundException notFound(String name){
+        return new NotFoundException("Character not found for name: " + name);
+    }
+
+    //Tested
     @Operation(summary = "Show all characters")
     @GetMapping
     public ResponseEntity<List<CharacterView>> homePage() {
@@ -44,65 +49,37 @@ public class CharacterController {
         return new ResponseEntity<>(new CharacterView(characterService.save(new CharacterModel(characterRequest))), HttpStatus.CREATED);
     }
 
-    //Tested; Specify the response object
+    //Tested
     @Operation(summary = "Show the list of items owned by character")
     @GetMapping("/{name}")
-    public ResponseEntity<Object> showCharacter(@RequestBody CharacterRequest characterRequest) {
-        Optional<CharacterModel> characterModelOptional = characterService.findByName(characterRequest.getName());
-        if (characterModelOptional.isEmpty()) {
-            return notFound();
-        }
-        CharacterModel character = characterModelOptional.get();
-
-
-        List<Object> response = new ArrayList<>();
-
-        response.add(new CharacterView(character));
-
-        List<ItemView> owned = ItemView.listOf(character.getItemsList());
-        response.add(owned);
-
-        /*List<ItemView> notOwned = new ArrayList<>();
-        for (ItemModel item : itemService.findAll()) {
-            if (!character.getItemsList().contains(item)) {
-                notOwned.add(new ItemView(item));
-            }
-        }
-        response.add(notOwned);*/
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public CharacterWithItemsView showCharacter(@PathVariable("name") String name) {
+        CharacterModel characterModel = characterService.findByName(name)
+                .orElseThrow(() -> notFound(name));
+        return new CharacterWithItemsView(characterModel);
     }
 
-    //Tested; Specify the response object
+    //Tested
     @Operation(summary = "Rename character")
     @PutMapping("/{name}")
-    public ResponseEntity<Object> updateCharacter(@PathVariable("name") String oldName, @RequestBody CharacterRequest characterRequest) {
-        Optional<CharacterModel> characterModelOptional = characterService.findByName(oldName);
-        if (characterModelOptional.isEmpty()) {
-            return notFound();
-        }
-        CharacterModel characterModel = characterModelOptional.get();
-
+    public CharacterView renameCharacter(@PathVariable("name") String oldName, @RequestBody CharacterRequest characterRequest) {
+        CharacterModel characterModel = characterService.findByName(oldName)
+                .orElseThrow(() -> notFound(oldName));
         characterModel.setName(characterRequest.getName());
-        return new ResponseEntity<>(new CharacterView(characterService.save(characterModel)), HttpStatus.OK);
+        return new CharacterView(characterService.save(characterModel));
     }
 
-    //Tested; Specify the response object
+    //Tested
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete character")
     @DeleteMapping("/{name}")
-    public ResponseEntity<Object> deleteCharacter(@PathVariable("name") String name) {
-        Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
-        if (characterModelOptional.isEmpty()) {
-            return notFound();
-        }
-        CharacterModel character = characterModelOptional.get();
-
+    public void deleteCharacter(@PathVariable("name") String name) {
+        CharacterModel character = characterService.findByName(name)
+                .orElseThrow(() -> notFound(name));
         for (ItemModel item: character.getItemsList()){
             item.getOwnersList().remove(character);
             itemService.save(item);
         }
-
         characterService.delete(character);
-        return new ResponseEntity<>("Character deleted successfully!", HttpStatus.OK);
     }
 
     //Tested; Specify the response object
