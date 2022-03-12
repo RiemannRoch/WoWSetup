@@ -36,11 +36,6 @@ public class ItemController {
         this.itemEquivalencePointsService = itemEquivalencePointsService;
     }
 
-    //To be removed
-    public static ResponseEntity<Object> notFound() {
-        return new ResponseEntity<>("Item not found!", HttpStatus.NOT_FOUND);
-    }
-
     public static NotFoundException notFound(long id){
         return new NotFoundException("Item not found for ID: " + id);
     }
@@ -80,7 +75,7 @@ public class ItemController {
         return new ItemCompleteView(newItem);
     }
 
-    //To be tested
+    //Tested
     @DeleteMapping("/{idItem}")
     public void deleteItem(@PathVariable(value = "idItem") long idItem) {
         Item item = itemService.findById(idItem)
@@ -94,7 +89,7 @@ public class ItemController {
         itemService.delete(item);
     }
 
-    //To be tested
+    //Tested
     @GetMapping("/{idItem}")
     public ItemCompleteView showItem(@PathVariable(value = "idItem") long idItem) {
         Item item = itemService.findById(idItem)
