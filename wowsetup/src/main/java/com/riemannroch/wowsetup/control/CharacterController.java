@@ -25,10 +25,6 @@ public class CharacterController {
         this.characterService = characterService;
         this.itemService = itemService;
     }
-    //To be removed
-    public static ResponseEntity<Object> notFound() {
-        return new ResponseEntity<>("Character not found!", HttpStatus.NOT_FOUND);
-    }
 
     public static NotFoundException notFound(String name) {
         return new NotFoundException("Character not found for name: " + name);

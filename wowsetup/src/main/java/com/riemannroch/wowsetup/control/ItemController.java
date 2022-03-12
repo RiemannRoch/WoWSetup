@@ -82,6 +82,7 @@ public class ItemController {
                 .orElseThrow(() -> notFound(idItem));
         for (Character character: item.getOwnersList()){
             character.getItemsList().remove(item);
+            characterService.save(character);
         }
         for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsService.findByItem(item)) {
             itemEquivalencePointsService.delete(itemEquivalencePoints);
