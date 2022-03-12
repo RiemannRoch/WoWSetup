@@ -38,15 +38,15 @@ public class CharacterController {
     //Tested
     @Operation(summary = "Show all characters")
     @GetMapping
-    public ResponseEntity<List<CharacterView>> homePage() {
-        return new ResponseEntity<>(CharacterView.listOf(characterService.findAll()), HttpStatus.OK);
+    public List<CharacterView> homePage() {
+        return CharacterView.listOf(characterService.findAll());
     }
 
     //Tested
     @Operation(summary = "Insert new character")
     @PostMapping
-    public ResponseEntity<CharacterView> addCharacter(@RequestBody CharacterRequest characterRequest) {
-        return new ResponseEntity<>(new CharacterView(characterService.save(new Character(characterRequest))), HttpStatus.CREATED);
+    public CharacterView addCharacter(@RequestBody CharacterRequest characterRequest) {
+        return new CharacterView(characterService.save(new Character(characterRequest)));
     }
 
     //Tested
