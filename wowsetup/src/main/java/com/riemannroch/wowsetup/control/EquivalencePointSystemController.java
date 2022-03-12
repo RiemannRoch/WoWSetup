@@ -7,6 +7,7 @@ import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
 import com.riemannroch.wowsetup.service.ItemEquivalencePointsService;
 import com.riemannroch.wowsetup.service.ItemService;
 import com.riemannroch.wowsetup.view.eps.EquivalencePointSystemView;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,12 +34,14 @@ public class EquivalencePointSystemController {
     }
 
     //Tested
+    @Operation(summary = "Show all equivalence point systems")
     @GetMapping
     public List<EquivalencePointSystemView> getAllEquivalencePointSystems() {
         return EquivalencePointSystemView.listOf(equivalencePointSystemService.findAll());
     }
 
-    //To be tested
+    //Tested
+    @Operation(summary = "Insert new equivalence point system")
     @PostMapping
     public EquivalencePointSystemView addEquivalencePointSystem(@RequestBody EquivalencePointSystem equivalencePointSystem) {
         equivalencePointSystemService.save(equivalencePointSystem);
@@ -48,14 +51,16 @@ public class EquivalencePointSystemController {
         return new EquivalencePointSystemView(equivalencePointSystem);
     }
 
-    //To be tested
+    //Tested
+    @Operation(summary = "Show equivalence point system's weights")
     @GetMapping("/{idEquivalencePointSystem}")
     public EquivalencePointSystem showEquivalencePointSystem(@PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
         return equivalencePointSystemService.findById(idEquivalencePointSystem)
                 .orElseThrow(() -> notFound(idEquivalencePointSystem));
     }
 
-    //To be tested
+    //Tested
+    @Operation(summary = "Update equivalence point system's weights")
     @PutMapping("/{idEquivalencePointSystem}")
     public EquivalencePointSystemView updateEquivalencePointSystem(@RequestBody EquivalencePointSystem equivalencePointSystem,
                                                                @PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
@@ -71,7 +76,8 @@ public class EquivalencePointSystemController {
         return new EquivalencePointSystemView(equivalencePointSystem);
     }
 
-    //To be tested
+    //Tested
+    @Operation(summary = "Delete equivalence point system")
     @DeleteMapping("/{idEquivalencePointSystem}")
     public void deleteEquivalencePointSystem(@PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
         EquivalencePointSystem eps = equivalencePointSystemService.findById(idEquivalencePointSystem)

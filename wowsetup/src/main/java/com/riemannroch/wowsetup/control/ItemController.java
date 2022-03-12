@@ -10,6 +10,7 @@ import com.riemannroch.wowsetup.service.ItemService;
 import com.riemannroch.wowsetup.view.character.CharacterView;
 import com.riemannroch.wowsetup.view.item.ItemCompleteView;
 import com.riemannroch.wowsetup.view.item.ItemView;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,12 +42,14 @@ public class ItemController {
     }
 
     //Tested
+    @Operation(summary = "Show all items")
     @GetMapping
     public List<ItemView> getAllItems() {
         return ItemView.listOf(itemService.findAll());
     }
 
     //Tested
+    @Operation(summary = "Insert new item")
     @PostMapping
     public ItemCompleteView addItem(@RequestBody ItemRequest itemRequest) {
         Item item = new Item();
@@ -60,6 +63,7 @@ public class ItemController {
     }
 
     //Tested
+    @Operation(summary = "Update item's attributes")
     @PutMapping("/{idItem}")
     public ItemCompleteView updateItem(@RequestBody Item newItem, @PathVariable(value = "idItem") long idItem) {
         Item item = itemService.findById(idItem)
@@ -76,6 +80,7 @@ public class ItemController {
     }
 
     //Tested
+    @Operation(summary = "Delete item")
     @DeleteMapping("/{idItem}")
     public void deleteItem(@PathVariable(value = "idItem") long idItem) {
         Item item = itemService.findById(idItem)
@@ -91,6 +96,7 @@ public class ItemController {
     }
 
     //Tested
+    @Operation(summary = "Show item's attributes and owners list")
     @GetMapping("/{idItem}")
     public ItemCompleteView showItem(@PathVariable(value = "idItem") long idItem) {
         Item item = itemService.findById(idItem)
