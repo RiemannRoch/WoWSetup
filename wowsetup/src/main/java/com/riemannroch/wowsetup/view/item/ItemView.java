@@ -1,6 +1,6 @@
 package com.riemannroch.wowsetup.view.item;
 
-import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.model.SlotEnum;
 import lombok.Data;
 
@@ -13,16 +13,16 @@ public class ItemView {
     private String name;
     private SlotEnum slotEnum;
 
-    public ItemView(ItemModel itemModel) {
-        this.id = itemModel.getIdItem();
-        this.name = itemModel.getName();
-        this.slotEnum = itemModel.getSlotEnum();
+    public ItemView(Item item) {
+        this.id = item.getIdItem();
+        this.name = item.getName();
+        this.slotEnum = item.getSlotEnum();
     }
 
-    public static List<ItemView> listOf(List<ItemModel> itemModelList) {
+    public static List<ItemView> listOf(List<Item> itemList) {
         List<ItemView> itemViewList = new ArrayList<>();
-        for (ItemModel itemModel: itemModelList){
-            itemViewList.add(new ItemView(itemModel));
+        for (Item item : itemList){
+            itemViewList.add(new ItemView(item));
         }
         return itemViewList;
     }

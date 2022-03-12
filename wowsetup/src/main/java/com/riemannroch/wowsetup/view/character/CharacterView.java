@@ -1,6 +1,6 @@
 package com.riemannroch.wowsetup.view.character;
 
-import com.riemannroch.wowsetup.model.CharacterModel;
+import com.riemannroch.wowsetup.model.Character;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -11,15 +11,15 @@ public class CharacterView {
     private long id;
     private String name;
 
-    public CharacterView(CharacterModel characterModel) {
-        this.id = characterModel.getIdCharacter();
-        this.name = characterModel.getName();
+    public CharacterView(Character character) {
+        this.id = character.getIdCharacter();
+        this.name = character.getName();
     }
 
-    public static List<CharacterView> listOf(List<CharacterModel> characterModelList){
+    public static List<CharacterView> listOf(List<Character> characterList){
         List<CharacterView> characterViewList = new ArrayList<>();
-        for (CharacterModel characterModel: characterModelList){
-            characterViewList.add(new CharacterView(characterModel));
+        for (Character character : characterList){
+            characterViewList.add(new CharacterView(character));
         }
         return characterViewList;
     }

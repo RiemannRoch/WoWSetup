@@ -1,8 +1,8 @@
 package com.riemannroch.wowsetup.control;
 
-import com.riemannroch.wowsetup.model.CharacterModel;
-import com.riemannroch.wowsetup.model.EquivalencePointSystemModel;
-import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.model.Character;
+import com.riemannroch.wowsetup.model.EquivalencePointSystem;
+import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.model.SlotEnum;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
@@ -35,7 +35,7 @@ public class BestInSlotController {
 
     @GetMapping
     public ResponseEntity<Object> getAllEquivalencePointSystemsForCharacter(@PathVariable("name") String name) {
-        Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
+        Optional<Character> characterModelOptional = characterService.findByName(name);
         if (characterModelOptional.isEmpty()) {
             return CharacterController.notFound();
         }
@@ -49,28 +49,28 @@ public class BestInSlotController {
     public ResponseEntity<Object> getBestInSlotList(
             @PathVariable("name") String name,
             @PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
-        Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
+        Optional<Character> characterModelOptional = characterService.findByName(name);
         if (characterModelOptional.isEmpty()) {
             return CharacterController.notFound();
         }
-        Optional<EquivalencePointSystemModel> equivalencePointSystemModelOptional =
+        Optional<EquivalencePointSystem> equivalencePointSystemModelOptional =
                 equivalencePointSystemService.findById(idEquivalencePointSystem);
         if (equivalencePointSystemModelOptional.isEmpty()) {
             return EquivalencePointSystemController.notFound();
         }
-        CharacterModel character = characterModelOptional.get();
-        EquivalencePointSystemModel eps = equivalencePointSystemModelOptional.get();
+        Character character = characterModelOptional.get();
+        EquivalencePointSystem eps = equivalencePointSystemModelOptional.get();
 
-        List<ItemModel> bestInSlotList = new ArrayList<>();
+        List<Item> bestInSlotList = new ArrayList<>();
 
         for (SlotEnum slotEnum : SlotEnum.values()) {
-            List<ItemModel> itemsInSlot = itemService.findBySlot(slotEnum);
-            ItemModel bestInSlot = new ItemModel();
+            List<Item> itemsInSlot = itemService.findBySlot(slotEnum);
+            Item bestInSlot = new Item();
             bestInSlot.setSlotEnum(slotEnum);
-            ItemModel secondBestInSlot = new ItemModel();
+            Item secondBestInSlot = new Item();
             secondBestInSlot.setSlotEnum(slotEnum);
             double bestInSlotEquivalencePoints = 0;
-            for (ItemModel item : itemsInSlot) {
+            for (Item item : itemsInSlot) {
                 if (item.equivalencePoints(eps) > bestInSlotEquivalencePoints) {
                     secondBestInSlot = bestInSlot;
                     bestInSlot = item;

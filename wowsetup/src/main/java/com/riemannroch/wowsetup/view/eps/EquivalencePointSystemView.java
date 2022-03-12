@@ -1,6 +1,6 @@
 package com.riemannroch.wowsetup.view.eps;
 
-import com.riemannroch.wowsetup.model.EquivalencePointSystemModel;
+import com.riemannroch.wowsetup.model.EquivalencePointSystem;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -11,15 +11,15 @@ public class EquivalencePointSystemView {
     private long id;
     private String name;
 
-    public EquivalencePointSystemView(EquivalencePointSystemModel equivalencePointSystemModel) {
-        this.id = equivalencePointSystemModel.getIdEquivalencePointSystem();
-        this.name = equivalencePointSystemModel.getName();
+    public EquivalencePointSystemView(EquivalencePointSystem equivalencePointSystem) {
+        this.id = equivalencePointSystem.getIdEquivalencePointSystem();
+        this.name = equivalencePointSystem.getName();
     }
 
-    public static List<EquivalencePointSystemView> listOf(List<EquivalencePointSystemModel> equivalencePointSystemModelList) {
+    public static List<EquivalencePointSystemView> listOf(List<EquivalencePointSystem> equivalencePointSystemList) {
         List<EquivalencePointSystemView> equivalencePointSystemViewList = new ArrayList<>();
-        for (EquivalencePointSystemModel equivalencePointSystemModel : equivalencePointSystemModelList) {
-            equivalencePointSystemViewList.add(new EquivalencePointSystemView(equivalencePointSystemModel));
+        for (EquivalencePointSystem equivalencePointSystem : equivalencePointSystemList) {
+            equivalencePointSystemViewList.add(new EquivalencePointSystemView(equivalencePointSystem));
         }
         return equivalencePointSystemViewList;
     }

@@ -1,6 +1,6 @@
 package com.riemannroch.wowsetup.service;
 
-import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.model.SlotEnum;
 import com.riemannroch.wowsetup.repository.ItemRepository;
 import org.springframework.stereotype.Service;
@@ -17,25 +17,25 @@ public class ItemService {
         this.itemRepository = itemRepository;
     }
 
-    public List<ItemModel> findAll(){
+    public List<Item> findAll(){
         return this.itemRepository.findAll();
     }
 
     @Transactional
-    public ItemModel save(ItemModel itemModel){
-        return this.itemRepository.save(itemModel);
+    public void save(Item item){
+        this.itemRepository.save(item);
     }
 
-    public Optional<ItemModel> findById(long id){
+    public Optional<Item> findById(long id){
         return this.itemRepository.findById(id);
     }
 
     @Transactional
-    public void delete(ItemModel itemModel){
-        this.itemRepository.delete(itemModel);
+    public void delete(Item item){
+        this.itemRepository.delete(item);
     }
 
-    public List<ItemModel> findBySlot(SlotEnum slotEnum) {
+    public List<Item> findBySlot(SlotEnum slotEnum) {
         return this.itemRepository.findBySlotEnum(slotEnum);
     }
 }

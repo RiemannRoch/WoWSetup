@@ -1,6 +1,6 @@
 package com.riemannroch.wowsetup.view.character;
 
-import com.riemannroch.wowsetup.model.CharacterModel;
+import com.riemannroch.wowsetup.model.Character;
 import com.riemannroch.wowsetup.view.item.ItemView;
 import lombok.Data;
 
@@ -12,9 +12,9 @@ public class CharacterWithItemsView {
     private String name;
     private List<ItemView> ItemsList;
 
-    public CharacterWithItemsView(CharacterModel characterModel) {
-        this.id = characterModel.getIdCharacter();
-        this.name = characterModel.getName();
-        this.ItemsList = ItemView.listOf(characterModel.getItemsList());
+    public CharacterWithItemsView(Character character) {
+        this.id = character.getIdCharacter();
+        this.name = character.getName();
+        this.ItemsList = ItemView.listOf(character.getItemsList());
     }
 }

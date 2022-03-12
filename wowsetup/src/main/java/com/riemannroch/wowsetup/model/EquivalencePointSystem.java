@@ -1,15 +1,20 @@
 package com.riemannroch.wowsetup.model;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "TB_EQUIVALENCEPOINTSYSTEM")
-@Data
-public class EquivalencePointSystemModel implements Serializable {
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+public class EquivalencePointSystem implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -31,4 +36,17 @@ public class EquivalencePointSystemModel implements Serializable {
     private double spellCriticalRateWeight;
     private double hasteWeight;
     private double spellHasteWeight;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        EquivalencePointSystem that = (EquivalencePointSystem) o;
+        return idEquivalencePointSystem != 0 && Objects.equals(idEquivalencePointSystem, that.idEquivalencePointSystem);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

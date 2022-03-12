@@ -1,6 +1,7 @@
 package com.riemannroch.wowsetup.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -8,6 +9,7 @@ import java.io.Serializable;
 
 @Embeddable
 @Data
+@NoArgsConstructor
 public class ItemEquivalencePointsKey implements Serializable {
 
     @Column(name = "item_id")

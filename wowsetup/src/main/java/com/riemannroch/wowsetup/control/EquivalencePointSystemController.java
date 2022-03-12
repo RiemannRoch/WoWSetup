@@ -1,8 +1,8 @@
 package com.riemannroch.wowsetup.control;
 
-import com.riemannroch.wowsetup.model.EquivalencePointSystemModel;
+import com.riemannroch.wowsetup.model.EquivalencePointSystem;
 import com.riemannroch.wowsetup.model.ItemEquivalencePoints;
-import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
 import com.riemannroch.wowsetup.service.ItemEquivalencePointsService;
 import com.riemannroch.wowsetup.service.ItemService;
@@ -37,50 +37,50 @@ public class EquivalencePointSystemController {
     }
     //Tested
     @PostMapping
-    public ResponseEntity<Object> addEquivalencePointSystem(@RequestBody EquivalencePointSystemModel equivalencePointSystemModel) {
-        equivalencePointSystemService.save(equivalencePointSystemModel);
-        for (ItemModel item : itemService.findAll()) {
-            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, equivalencePointSystemModel));
+    public ResponseEntity<Object> addEquivalencePointSystem(@RequestBody EquivalencePointSystem equivalencePointSystem) {
+        equivalencePointSystemService.save(equivalencePointSystem);
+        for (Item item : itemService.findAll()) {
+            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, equivalencePointSystem));
         }
-        return new ResponseEntity<>(new EquivalencePointSystemView(equivalencePointSystemModel), HttpStatus.OK);
+        return new ResponseEntity<>(new EquivalencePointSystemView(equivalencePointSystem), HttpStatus.OK);
     }
     //Tested
     @GetMapping("/{idEquivalencePointSystem}")
     public ResponseEntity<Object> showEquivalencePointSystem(@PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
-        Optional<EquivalencePointSystemModel> equivalencePointSystemModelOptional = equivalencePointSystemService.findById(idEquivalencePointSystem);
-        if (equivalencePointSystemModelOptional.isEmpty()) {
+        Optional<EquivalencePointSystem> equivalencePointSystemOptional = equivalencePointSystemService.findById(idEquivalencePointSystem);
+        if (equivalencePointSystemOptional.isEmpty()) {
             return notFound();
         }
-        return new ResponseEntity<>(equivalencePointSystemModelOptional.get(), HttpStatus.OK);
+        return new ResponseEntity<>(equivalencePointSystemOptional.get(), HttpStatus.OK);
     }
     //Tested
     @PutMapping("/{idEquivalencePointSystem}")
-    public ResponseEntity<Object> updateEquivalencePointSystem(@RequestBody EquivalencePointSystemModel equivalencePointSystemModel,
+    public ResponseEntity<Object> updateEquivalencePointSystem(@RequestBody EquivalencePointSystem equivalencePointSystem,
                                                                @PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
-        Optional<EquivalencePointSystemModel> equivalencePointSystemModelOptional = equivalencePointSystemService.findById(idEquivalencePointSystem);
-        if (equivalencePointSystemModelOptional.isEmpty()) {
+        Optional<EquivalencePointSystem> equivalencePointSystemOptional = equivalencePointSystemService.findById(idEquivalencePointSystem);
+        if (equivalencePointSystemOptional.isEmpty()) {
             return notFound();
         }
-        equivalencePointSystemModel.setIdEquivalencePointSystem(idEquivalencePointSystem);
-        equivalencePointSystemService.save(equivalencePointSystemModel);
+        equivalencePointSystem.setIdEquivalencePointSystem(idEquivalencePointSystem);
+        equivalencePointSystemService.save(equivalencePointSystem);
 
-        for (ItemModel itemModel : itemService.findAll()){
-            itemEquivalencePointsService.save(new ItemEquivalencePoints(itemModel,equivalencePointSystemModel));
+        for (Item item : itemService.findAll()){
+            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, equivalencePointSystem));
         }
-        return new ResponseEntity<>(new EquivalencePointSystemView(equivalencePointSystemService.save(equivalencePointSystemModel)), HttpStatus.OK);
+        return new ResponseEntity<>(new EquivalencePointSystemView(equivalencePointSystemService.save(equivalencePointSystem)), HttpStatus.OK);
     }
     //Tested
     @DeleteMapping("/{idEquivalencePointSystem}")
     public ResponseEntity<Object> deleteEquivalencePointSystem(@PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
-        Optional<EquivalencePointSystemModel> equivalencePointSystemModelOptional = equivalencePointSystemService.findById(idEquivalencePointSystem);
-        if (equivalencePointSystemModelOptional.isEmpty()) {
+        Optional<EquivalencePointSystem> equivalencePointSystemOptional = equivalencePointSystemService.findById(idEquivalencePointSystem);
+        if (equivalencePointSystemOptional.isEmpty()) {
             return notFound();
         }
-        EquivalencePointSystemModel equivalencePointSystemModel = equivalencePointSystemModelOptional.get();
-        for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsService.findByEps(equivalencePointSystemModel)){
+        EquivalencePointSystem equivalencePointSystem = equivalencePointSystemOptional.get();
+        for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsService.findByEps(equivalencePointSystem)){
             itemEquivalencePointsService.delete(itemEquivalencePoints);
         }
-        equivalencePointSystemService.delete(equivalencePointSystemModel);
+        equivalencePointSystemService.delete(equivalencePointSystem);
         return new ResponseEntity<>("Equivalence Point System deleted successfully", HttpStatus.OK);
     }
 }

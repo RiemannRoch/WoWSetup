@@ -1,9 +1,9 @@
 package com.riemannroch.wowsetup.service;
 
-import com.riemannroch.wowsetup.model.EquivalencePointSystemModel;
+import com.riemannroch.wowsetup.model.EquivalencePointSystem;
 import com.riemannroch.wowsetup.model.ItemEquivalencePoints;
 import com.riemannroch.wowsetup.model.ItemEquivalencePointsKey;
-import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.repository.ItemEquivalencePointsRepository;
 import org.springframework.stereotype.Service;
 
@@ -33,15 +33,15 @@ public class ItemEquivalencePointsService {
         this.itemEquivalencePointsRepository.deleteById(itemEquivalencePointsKey);
     }
 
-    public List<ItemEquivalencePoints> findByItem(ItemModel itemModel) {
-        return this.itemEquivalencePointsRepository.findByItem(itemModel);
+    public List<ItemEquivalencePoints> findByItem(Item item) {
+        return this.itemEquivalencePointsRepository.findByItem(item);
     }
     @Transactional
     public void delete(ItemEquivalencePoints itemEquivalencePoints) {
         this.itemEquivalencePointsRepository.delete(itemEquivalencePoints);
     }
 
-    public List<ItemEquivalencePoints> findByEps(EquivalencePointSystemModel equivalencePointSystemModel) {
-        return itemEquivalencePointsRepository.findByEps(equivalencePointSystemModel);
+    public List<ItemEquivalencePoints> findByEps(EquivalencePointSystem equivalencePointSystem) {
+        return itemEquivalencePointsRepository.findByEps(equivalencePointSystem);
     }
 }

@@ -1,6 +1,6 @@
 package com.riemannroch.wowsetup.service;
 
-import com.riemannroch.wowsetup.model.EquivalencePointSystemModel;
+import com.riemannroch.wowsetup.model.EquivalencePointSystem;
 import com.riemannroch.wowsetup.repository.EquivalencePointSystemRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +16,16 @@ public class EquivalencePointSystemService {
         this.equivalencePointSystemRepository = equivalencePointSystemRepository;
     }
 
-    public List<EquivalencePointSystemModel> findAll(){
+    public List<EquivalencePointSystem> findAll(){
         return equivalencePointSystemRepository.findAll();
     }
 
     @Transactional
-    public EquivalencePointSystemModel save(EquivalencePointSystemModel equivalencePointSystemModel) {
-        return equivalencePointSystemRepository.save(equivalencePointSystemModel);
+    public EquivalencePointSystem save(EquivalencePointSystem equivalencePointSystem) {
+        return equivalencePointSystemRepository.save(equivalencePointSystem);
     }
 
-    public Optional<EquivalencePointSystemModel> findById(long idEquivalencePointSystem) {
+    public Optional<EquivalencePointSystem> findById(long idEquivalencePointSystem) {
         return equivalencePointSystemRepository.findById(idEquivalencePointSystem);
     }
 
@@ -35,7 +35,7 @@ public class EquivalencePointSystemService {
     }
 
     @Transactional
-    public void delete(EquivalencePointSystemModel equivalencePointSystemModel) {
-        equivalencePointSystemRepository.delete(equivalencePointSystemModel);
+    public void delete(EquivalencePointSystem equivalencePointSystem) {
+        equivalencePointSystemRepository.delete(equivalencePointSystem);
     }
 }

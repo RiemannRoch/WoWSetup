@@ -1,6 +1,6 @@
 package com.riemannroch.wowsetup.service;
 
-import com.riemannroch.wowsetup.model.CharacterModel;
+import com.riemannroch.wowsetup.model.Character;
 import com.riemannroch.wowsetup.repository.CharacterRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +16,16 @@ public class CharacterService {
         this.characterRepository = characterRepository;
     }
 
-    public List<CharacterModel> findAll(){
+    public List<Character> findAll(){
         return this.characterRepository.findAll();
     }
 
     @Transactional
-    public CharacterModel save(CharacterModel characterModel){
-        return this.characterRepository.save(characterModel);
+    public Character save(Character character){
+        return this.characterRepository.save(character);
     }
 
-    public Optional<CharacterModel> findByName(String name) {
+    public Optional<Character> findByName(String name) {
         return this.characterRepository.findByName(name);
     }
 
@@ -34,7 +34,7 @@ public class CharacterService {
         characterRepository.deleteByName(name);
     }
 
-    public void delete(CharacterModel characterModel) {
-        characterRepository.delete(characterModel);
+    public void delete(Character character) {
+        characterRepository.delete(character);
     }
 }

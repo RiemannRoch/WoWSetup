@@ -1,7 +1,7 @@
 package com.riemannroch.wowsetup.control;
 
-import com.riemannroch.wowsetup.model.CharacterModel;
-import com.riemannroch.wowsetup.model.ItemModel;
+import com.riemannroch.wowsetup.model.Character;
+import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.request.CharacterRequest;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.ItemService;
@@ -46,26 +46,26 @@ public class CharacterController {
     @Operation(summary = "Insert new character")
     @PostMapping
     public ResponseEntity<CharacterView> addCharacter(@RequestBody CharacterRequest characterRequest) {
-        return new ResponseEntity<>(new CharacterView(characterService.save(new CharacterModel(characterRequest))), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CharacterView(characterService.save(new Character(characterRequest))), HttpStatus.CREATED);
     }
 
     //Tested
     @Operation(summary = "Show the list of items owned by character")
     @GetMapping("/{name}")
     public CharacterWithItemsView showCharacter(@PathVariable("name") String name) {
-        CharacterModel characterModel = characterService.findByName(name)
+        Character character = characterService.findByName(name)
                 .orElseThrow(() -> notFound(name));
-        return new CharacterWithItemsView(characterModel);
+        return new CharacterWithItemsView(character);
     }
 
     //Tested
     @Operation(summary = "Rename character")
     @PutMapping("/{name}")
     public CharacterView renameCharacter(@PathVariable("name") String oldName, @RequestBody CharacterRequest characterRequest) {
-        CharacterModel characterModel = characterService.findByName(oldName)
+        Character character = characterService.findByName(oldName)
                 .orElseThrow(() -> notFound(oldName));
-        characterModel.setName(characterRequest.getName());
-        return new CharacterView(characterService.save(characterModel));
+        character.setName(characterRequest.getName());
+        return new CharacterView(characterService.save(character));
     }
 
     //Tested
@@ -73,9 +73,9 @@ public class CharacterController {
     @Operation(summary = "Delete character")
     @DeleteMapping("/{name}")
     public void deleteCharacter(@PathVariable("name") String name) {
-        CharacterModel character = characterService.findByName(name)
+        Character character = characterService.findByName(name)
                 .orElseThrow(() -> notFound(name));
-        for (ItemModel item: character.getItemsList()){
+        for (Item item: character.getItemsList()){
             item.getOwnersList().remove(character);
             itemService.save(item);
         }
@@ -86,19 +86,19 @@ public class CharacterController {
     @Operation(summary = "Add an item to a character")
     @PostMapping("/{name}/{idItem}")
     public ResponseEntity<Object> addItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
-        Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
-        if (characterModelOptional.isEmpty()) {
+        Optional<Character> characterOptional = characterService.findByName(name);
+        if (characterOptional.isEmpty()) {
             return notFound();
         }
-        Optional<ItemModel> itemModelOptional = itemService.findById(idItem);
-        if (itemModelOptional.isEmpty()) {
+        Optional<Item> itemOptional = itemService.findById(idItem);
+        if (itemOptional.isEmpty()) {
             return ItemController.notFound();
         }
 
-        CharacterModel character = characterModelOptional.get();
-        ItemModel item = itemModelOptional.get();
+        Character character = characterOptional.get();
+        Item item = itemOptional.get();
 
-        List<ItemModel> itemsList = character.getItemsList();
+        List<Item> itemsList = character.getItemsList();
         if (itemsList.contains(item)) {
             assert item.getOwnersList().contains(character);
             return new ResponseEntity<>("The item " + item.getName() + " is already owned by " +
@@ -116,18 +116,18 @@ public class CharacterController {
     @Operation(summary = "Remove an item from a character")
     @DeleteMapping("/{name}/{idItem}")
     public ResponseEntity<Object> removeItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
-        Optional<CharacterModel> characterModelOptional = characterService.findByName(name);
-        if (characterModelOptional.isEmpty()) {
+        Optional<Character> characterOptional = characterService.findByName(name);
+        if (characterOptional.isEmpty()) {
             return notFound();
         }
-        Optional<ItemModel> itemModelOptional = itemService.findById(idItem);
-        if (itemModelOptional.isEmpty()) {
+        Optional<Item> itemOptional = itemService.findById(idItem);
+        if (itemOptional.isEmpty()) {
             return ItemController.notFound();
         }
-        CharacterModel character = characterModelOptional.get();
-        ItemModel item = itemModelOptional.get();
+        Character character = characterOptional.get();
+        Item item = itemOptional.get();
 
-        List<ItemModel> itemsList = character.getItemsList();
+        List<Item> itemsList = character.getItemsList();
         if (itemsList.contains(item)) {
             assert item.getOwnersList().contains(character);
             itemsList.remove(item);

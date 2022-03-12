@@ -40,31 +40,31 @@ public class ItemController {
     @GetMapping
     public ResponseEntity<Object> getAllItems() {
         List<ItemView> itemViewList = new ArrayList<>();
-        for (ItemModel itemModel : itemService.findAll()) {
-            itemViewList.add(new ItemView(itemModel));
+        for (Item item : itemService.findAll()) {
+            itemViewList.add(new ItemView(item));
         }
         return new ResponseEntity<>(itemViewList, HttpStatus.OK);
     }
     //Tested
     @PostMapping
-    public ResponseEntity<Object> addItem(@RequestBody ItemModel itemModel) {
-        itemService.save(itemModel);
-        for (EquivalencePointSystemModel eps : equivalencePointSystemService.findAll()) {
-            itemEquivalencePointsService.save(new ItemEquivalencePoints(itemModel, eps));
+    public ResponseEntity<Object> addItem(@RequestBody Item item) {
+        itemService.save(item);
+        for (EquivalencePointSystem eps : equivalencePointSystemService.findAll()) {
+            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, eps));
         }
-        return new ResponseEntity<>(new ItemView(itemModel), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ItemView(item), HttpStatus.CREATED);
     }
     //Tested
     @PutMapping("/{idItem}")
-    public ResponseEntity<Object> updateItem(@RequestBody ItemModel newItem, @PathVariable(value = "idItem") long idItem) {
-        Optional<ItemModel> itemModelOptional = itemService.findById(idItem);
-        if (itemModelOptional.isEmpty()) {
+    public ResponseEntity<Object> updateItem(@RequestBody Item newItem, @PathVariable(value = "idItem") long idItem) {
+        Optional<Item> itemOptional = itemService.findById(idItem);
+        if (itemOptional.isEmpty()) {
             return notFound();
         }
         newItem.setIdItem(idItem);
         itemService.save(newItem);
 
-        for (EquivalencePointSystemModel eps : equivalencePointSystemService.findAll()) {
+        for (EquivalencePointSystem eps : equivalencePointSystemService.findAll()) {
             ItemEquivalencePoints itemEquivalencePoints = new ItemEquivalencePoints(newItem, eps);
             itemEquivalencePointsService.save(itemEquivalencePoints);
         }
@@ -73,11 +73,11 @@ public class ItemController {
     //Tested
     @DeleteMapping("/{idItem}")
     public ResponseEntity<Object> deleteItem(@PathVariable(value = "idItem") long idItem) {
-        Optional<ItemModel> itemModelOptional = itemService.findById(idItem);
-        if (itemModelOptional.isEmpty()) {
+        Optional<Item> itemOptional = itemService.findById(idItem);
+        if (itemOptional.isEmpty()) {
             return notFound();
         }
-        ItemModel item = itemModelOptional.get();
+        Item item = itemOptional.get();
         for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsService.findByItem(item)) {
             itemEquivalencePointsService.delete(itemEquivalencePoints);
         }
@@ -87,11 +87,11 @@ public class ItemController {
     //Tested
     @GetMapping("/{idItem}")
     public ResponseEntity<Object> showItem(@PathVariable(value = "idItem") long idItem) {
-        Optional<ItemModel> itemModelOptional = itemService.findById(idItem);
-        if (itemModelOptional.isEmpty()) {
+        Optional<Item> itemOptional = itemService.findById(idItem);
+        if (itemOptional.isEmpty()) {
             return notFound();
         }
-        ItemModel item = itemModelOptional.get();
+        Item item = itemOptional.get();
 
         List<Object> response = new ArrayList<>();
         response.add(new ItemCompleteView(item));
