@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/wowsetup")
@@ -26,7 +25,7 @@ public class CharacterController {
         this.characterService = characterService;
         this.itemService = itemService;
     }
-
+    //To be removed
     public static ResponseEntity<Object> notFound() {
         return new ResponseEntity<>("Character not found!", HttpStatus.NOT_FOUND);
     }

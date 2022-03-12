@@ -1,8 +1,12 @@
 package com.riemannroch.wowsetup.view.item;
 
 import com.riemannroch.wowsetup.model.Item;
+import com.riemannroch.wowsetup.view.character.CharacterView;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +25,7 @@ public class ItemCompleteView extends ItemView {
     private int haste;
     private int spellHaste;
     private int resilience;
+    private List<CharacterView> ownersList;
 
     public ItemCompleteView(Item item){
         super(item);
@@ -38,5 +43,6 @@ public class ItemCompleteView extends ItemView {
         this.haste = item.getHaste();
         this.spellHaste = item.getSpellHaste();
         this.resilience = item.getResilience();
+        this.ownersList = CharacterView.listOf(item.getOwnersList());
     }
 }
