@@ -31,7 +31,7 @@ public class CharacterController {
         return new ResponseEntity<>("Character not found!", HttpStatus.NOT_FOUND);
     }
 
-    public static NotFoundException notFound(String name){
+    public static NotFoundException notFound(String name) {
         return new NotFoundException("Character not found for name: " + name);
     }
 
@@ -75,57 +75,42 @@ public class CharacterController {
     public void deleteCharacter(@PathVariable("name") String name) {
         Character character = characterService.findByName(name)
                 .orElseThrow(() -> notFound(name));
-        for (Item item: character.getItemsList()){
+        for (Item item : character.getItemsList()) {
             item.getOwnersList().remove(character);
             itemService.save(item);
         }
         characterService.delete(character);
     }
 
-    //Tested; Specify the response object
+    //Tested
     @Operation(summary = "Add an item to a character")
     @PostMapping("/{name}/{idItem}")
-    public ResponseEntity<Object> addItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
-        Optional<Character> characterOptional = characterService.findByName(name);
-        if (characterOptional.isEmpty()) {
-            return notFound();
-        }
-        Optional<Item> itemOptional = itemService.findById(idItem);
-        if (itemOptional.isEmpty()) {
-            return ItemController.notFound();
-        }
+    public void addItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
+        Character character = characterService.findByName(name)
+                .orElseThrow(() -> notFound(name));
 
-        Character character = characterOptional.get();
-        Item item = itemOptional.get();
+        Item item = itemService.findById(idItem)
+                .orElseThrow(() -> ItemController.notFound(idItem));
 
-        List<Item> itemsList = character.getItemsList();
-        if (itemsList.contains(item)) {
-            assert item.getOwnersList().contains(character);
-            return new ResponseEntity<>("The item " + item.getName() + " is already owned by " +
-                    character.getName(), HttpStatus.CONFLICT);
+        List<Item> itemList = character.getItemsList();
+        if (!itemList.contains(item)) {
+            assert !item.getOwnersList().contains(character);
+            itemList.add(item);
+            item.getOwnersList().add(character);
+            characterService.save(character);
+            itemService.save(item);
         }
-        itemsList.add(item);
-        item.getOwnersList().add(character);
-        characterService.save(character);
-        itemService.save(item);
-        return new ResponseEntity<>("The item " + item.getName() + " is now owned by " +
-                character.getName(), HttpStatus.CREATED);
     }
 
-    //Tested; Specify the response object
+    //Tested
     @Operation(summary = "Remove an item from a character")
     @DeleteMapping("/{name}/{idItem}")
-    public ResponseEntity<Object> removeItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
-        Optional<Character> characterOptional = characterService.findByName(name);
-        if (characterOptional.isEmpty()) {
-            return notFound();
-        }
-        Optional<Item> itemOptional = itemService.findById(idItem);
-        if (itemOptional.isEmpty()) {
-            return ItemController.notFound();
-        }
-        Character character = characterOptional.get();
-        Item item = itemOptional.get();
+    public void removeItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
+        Character character = characterService.findByName(name)
+                .orElseThrow(() -> notFound(name));
+
+        Item item = itemService.findById(idItem)
+                .orElseThrow(() -> ItemController.notFound(idItem));
 
         List<Item> itemsList = character.getItemsList();
         if (itemsList.contains(item)) {
@@ -134,10 +119,6 @@ public class CharacterController {
             item.getOwnersList().remove(character);
             itemService.save(item);
             characterService.save(character);
-            return new ResponseEntity<>("The item " + item.getName() + " is no more owned by " +
-                    character.getName(), HttpStatus.OK);
         }
-        return new ResponseEntity<>("The item " + item.getName() + " is not owned by " +
-                character.getName(), HttpStatus.CONFLICT);
     }
 }

@@ -11,6 +11,7 @@ import com.riemannroch.wowsetup.view.item.ItemView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.webjars.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,10 @@ public class ItemController {
 
     public static ResponseEntity<Object> notFound() {
         return new ResponseEntity<>("Item not found!", HttpStatus.NOT_FOUND);
+    }
+
+    public static NotFoundException notFound(long id){
+        return new NotFoundException("Character not found for name: " + id);
     }
 
     //Tested
