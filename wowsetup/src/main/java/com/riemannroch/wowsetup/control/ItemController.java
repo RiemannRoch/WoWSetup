@@ -73,8 +73,7 @@ public class ItemController {
         itemService.save(newItem);
 
         for (EquivalencePointSystem eps : equivalencePointSystemService.findAll()) {
-            ItemEquivalencePoints itemEquivalencePoints = new ItemEquivalencePoints(newItem, eps);
-            itemEquivalencePointsService.save(itemEquivalencePoints);
+            itemEquivalencePointsService.save(new ItemEquivalencePoints(newItem, eps));
         }
         return new ItemCompleteView(newItem);
     }

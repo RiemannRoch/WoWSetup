@@ -1,20 +1,20 @@
 package com.riemannroch.wowsetup.service;
 
 import com.riemannroch.wowsetup.model.Character;
+import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.repository.CharacterRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
 public class CharacterService {
     final CharacterRepository characterRepository;
-
-    public CharacterService(CharacterRepository characterRepository) {
-        this.characterRepository = characterRepository;
-    }
+    final ItemService itemService;
 
     public List<Character> findAll(){
         return this.characterRepository.findAll();
@@ -35,6 +35,10 @@ public class CharacterService {
     }
 
     public void delete(Character character) {
+        for (Item item : character.getItemsList()) {
+            item.getOwnersList().remove(character);
+            itemService.save(item);
+        }
         characterRepository.delete(character);
     }
 }
