@@ -8,6 +8,7 @@ import com.riemannroch.wowsetup.service.ItemEquivalencePointsService;
 import com.riemannroch.wowsetup.service.ItemService;
 import com.riemannroch.wowsetup.view.eps.EquivalencePointSystemView;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +17,13 @@ import org.webjars.NotFoundException;
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/wowsetup/eps")
 public class EquivalencePointSystemController {
     final EquivalencePointSystemService equivalencePointSystemService;
     final ItemService itemService;
     final ItemEquivalencePointsService itemEquivalencePointsService;
-
-    public EquivalencePointSystemController(EquivalencePointSystemService equivalencePointSystemService, ItemService itemService, ItemEquivalencePointsService itemEquivalencePointsService) {
-        this.equivalencePointSystemService = equivalencePointSystemService;
-        this.itemService = itemService;
-        this.itemEquivalencePointsService = itemEquivalencePointsService;
-    }
 
     public static NotFoundException notFound(long id) {
         return new NotFoundException("Equivalence Point System not found for ID: " + id);
@@ -41,13 +37,11 @@ public class EquivalencePointSystemController {
     }
 
     //Tested
+    @ResponseStatus(value = HttpStatus.CREATED)
     @Operation(summary = "Insert new equivalence point system")
     @PostMapping
     public EquivalencePointSystemView addEquivalencePointSystem(@RequestBody EquivalencePointSystem equivalencePointSystem) {
         equivalencePointSystemService.save(equivalencePointSystem);
-        for (Item item : itemService.findAll()) {
-            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, equivalencePointSystem));
-        }
         return new EquivalencePointSystemView(equivalencePointSystem);
     }
 
@@ -69,10 +63,6 @@ public class EquivalencePointSystemController {
 
         equivalencePointSystem.setIdEquivalencePointSystem(idEquivalencePointSystem);
         equivalencePointSystemService.save(equivalencePointSystem);
-
-        for (Item item: itemService.findAll()){
-            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, equivalencePointSystem));
-        }
         return new EquivalencePointSystemView(equivalencePointSystem);
     }
 
@@ -82,9 +72,6 @@ public class EquivalencePointSystemController {
     public void deleteEquivalencePointSystem(@PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
         EquivalencePointSystem eps = equivalencePointSystemService.findById(idEquivalencePointSystem)
                 .orElseThrow(() -> notFound(idEquivalencePointSystem));
-        for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsService.findByEps(eps)){
-            itemEquivalencePointsService.delete(itemEquivalencePoints);
-        }
         equivalencePointSystemService.delete(eps);
     }
 }
