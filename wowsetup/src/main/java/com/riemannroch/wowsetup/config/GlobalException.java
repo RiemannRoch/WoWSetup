@@ -19,7 +19,7 @@ public class GlobalException extends ResponseEntityExceptionHandler {
                 .message(message).build(), status);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ResponseError> handleNotFound(NotFoundException ex){
         return buildResponse(ex.getMessage(),HttpStatus.NOT_FOUND);
     }
