@@ -5,6 +5,7 @@ import com.riemannroch.wowsetup.model.ItemEquivalencePoints;
 import com.riemannroch.wowsetup.model.ItemEquivalencePointsKey;
 import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.repository.ItemEquivalencePointsRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,25 +24,26 @@ public class ItemEquivalencePointsService {
         return this.itemEquivalencePointsRepository.findById(itemEquivalencePointsKey);
     }
 
+    public List<ItemEquivalencePoints> findByItem(Item item) {
+        return this.itemEquivalencePointsRepository.findByItem(item);
+    }
+
+    public List<ItemEquivalencePoints> findByEps(EquivalencePointSystem equivalencePointSystem) {
+        return itemEquivalencePointsRepository.findByEps(equivalencePointSystem);
+    }
+
+    public List<ItemEquivalencePoints> findByEpsAndOrderByEquivalencePoints(EquivalencePointSystem equivalencePointSystem){
+        Sort sort = Sort.by("equivalencePoints").descending();
+        return itemEquivalencePointsRepository.findByEps(equivalencePointSystem, sort);
+    }
+
     @Transactional
     public void save(ItemEquivalencePoints itemEquivalencePoints) {
         this.itemEquivalencePointsRepository.save(itemEquivalencePoints);
     }
 
     @Transactional
-    public void deleteById(ItemEquivalencePointsKey itemEquivalencePointsKey) {
-        this.itemEquivalencePointsRepository.deleteById(itemEquivalencePointsKey);
-    }
-
-    public List<ItemEquivalencePoints> findByItem(Item item) {
-        return this.itemEquivalencePointsRepository.findByItem(item);
-    }
-    @Transactional
     public void delete(ItemEquivalencePoints itemEquivalencePoints) {
         this.itemEquivalencePointsRepository.delete(itemEquivalencePoints);
-    }
-
-    public List<ItemEquivalencePoints> findByEps(EquivalencePointSystem equivalencePointSystem) {
-        return itemEquivalencePointsRepository.findByEps(equivalencePointSystem);
     }
 }
