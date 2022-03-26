@@ -11,6 +11,7 @@ import com.riemannroch.wowsetup.view.character.CharacterView;
 import com.riemannroch.wowsetup.view.item.ItemCompleteView;
 import com.riemannroch.wowsetup.view.item.ItemView;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+@AllArgsConstructor
 @RestController
 @RequestMapping("/wowsetup/items")
 public class ItemController {
@@ -29,13 +30,6 @@ public class ItemController {
     final CharacterService characterService;
     final EquivalencePointSystemService equivalencePointSystemService;
     final ItemEquivalencePointsService itemEquivalencePointsService;
-
-    public ItemController(ItemService itemService, CharacterService characterService, EquivalencePointSystemService equivalencePointSystemService, ItemEquivalencePointsService itemEquivalencePointsService) {
-        this.itemService = itemService;
-        this.characterService = characterService;
-        this.equivalencePointSystemService = equivalencePointSystemService;
-        this.itemEquivalencePointsService = itemEquivalencePointsService;
-    }
 
     public static NotFoundException notFound(long id){
         return new NotFoundException("Item not found for ID: " + id);
@@ -49,6 +43,7 @@ public class ItemController {
     }
 
     //Tested
+    @ResponseStatus(value = HttpStatus.CREATED)
     @Operation(summary = "Insert new item")
     @PostMapping
     public ItemCompleteView addItem(@RequestBody ItemRequest itemRequest) {
@@ -56,9 +51,6 @@ public class ItemController {
         BeanUtils.copyProperties(itemRequest,item);
         item.setOwnersList(new ArrayList<>());
         itemService.save(item);
-        for (EquivalencePointSystem eps : equivalencePointSystemService.findAll()) {
-            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, eps));
-        }
         return new ItemCompleteView(item);
     }
 
@@ -71,11 +63,6 @@ public class ItemController {
         newItem.setIdItem(idItem);
         newItem.setOwnersList(item.getOwnersList());
         itemService.save(newItem);
-
-        for (EquivalencePointSystem eps : equivalencePointSystemService.findAll()) {
-            ItemEquivalencePoints itemEquivalencePoints = new ItemEquivalencePoints(newItem, eps);
-            itemEquivalencePointsService.save(itemEquivalencePoints);
-        }
         return new ItemCompleteView(newItem);
     }
 
@@ -85,13 +72,6 @@ public class ItemController {
     public void deleteItem(@PathVariable(value = "idItem") long idItem) {
         Item item = itemService.findById(idItem)
                 .orElseThrow(() -> notFound(idItem));
-        for (Character character: item.getOwnersList()){
-            character.getItemsList().remove(item);
-            characterService.save(character);
-        }
-        for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsService.findByItem(item)) {
-            itemEquivalencePointsService.delete(itemEquivalencePoints);
-        }
         itemService.delete(item);
     }
 

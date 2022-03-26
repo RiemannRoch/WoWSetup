@@ -3,27 +3,26 @@ package com.riemannroch.wowsetup.control;
 import com.riemannroch.wowsetup.model.Character;
 import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.request.CharacterRequest;
+import com.riemannroch.wowsetup.service.CharacterItemService;
 import com.riemannroch.wowsetup.service.CharacterService;
 import com.riemannroch.wowsetup.service.ItemService;
 import com.riemannroch.wowsetup.view.character.CharacterView;
 import com.riemannroch.wowsetup.view.character.CharacterWithItemsView;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
 
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/wowsetup")
 public class CharacterController {
     final CharacterService characterService;
     final ItemService itemService;
-
-    public CharacterController(CharacterService characterService, ItemService itemService) {
-        this.characterService = characterService;
-        this.itemService = itemService;
-    }
+    final CharacterItemService characterItemService;
 
     public static NotFoundException notFound(String name) {
         return new NotFoundException("Character not found for name: " + name);
@@ -37,6 +36,7 @@ public class CharacterController {
     }
 
     //Tested
+    @ResponseStatus(value = HttpStatus.CREATED)
     @Operation(summary = "Insert new character")
     @PostMapping
     public CharacterView addCharacter(@RequestBody CharacterRequest characterRequest) {
@@ -69,14 +69,11 @@ public class CharacterController {
     public void deleteCharacter(@PathVariable("name") String name) {
         Character character = characterService.findByName(name)
                 .orElseThrow(() -> notFound(name));
-        for (Item item : character.getItemsList()) {
-            item.getOwnersList().remove(character);
-            itemService.save(item);
-        }
         characterService.delete(character);
     }
 
     //Tested
+    @ResponseStatus(value = HttpStatus.CREATED)
     @Operation(summary = "Add an item to a character")
     @PostMapping("/{name}/{idItem}")
     public void addItemOwned(@PathVariable("name") String name, @PathVariable("idItem") long idItem) {
@@ -86,14 +83,7 @@ public class CharacterController {
         Item item = itemService.findById(idItem)
                 .orElseThrow(() -> ItemController.notFound(idItem));
 
-        List<Item> itemList = character.getItemsList();
-        if (!itemList.contains(item)) {
-            assert !item.getOwnersList().contains(character);
-            itemList.add(item);
-            item.getOwnersList().add(character);
-            characterService.save(character);
-            itemService.save(item);
-        }
+        characterItemService.addRelation(character, item);
     }
 
     //Tested
@@ -106,13 +96,6 @@ public class CharacterController {
         Item item = itemService.findById(idItem)
                 .orElseThrow(() -> ItemController.notFound(idItem));
 
-        List<Item> itemsList = character.getItemsList();
-        if (itemsList.contains(item)) {
-            assert item.getOwnersList().contains(character);
-            itemsList.remove(item);
-            item.getOwnersList().remove(character);
-            itemService.save(item);
-            characterService.save(character);
-        }
+        characterItemService.removeRelation(character, item);
     }
 }

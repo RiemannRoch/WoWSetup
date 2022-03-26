@@ -1,21 +1,25 @@
 package com.riemannroch.wowsetup.service;
 
+import com.riemannroch.wowsetup.model.Character;
+import com.riemannroch.wowsetup.model.EquivalencePointSystem;
 import com.riemannroch.wowsetup.model.Item;
+import com.riemannroch.wowsetup.model.ItemEquivalencePoints;
 import com.riemannroch.wowsetup.model.SlotEnum;
 import com.riemannroch.wowsetup.repository.ItemRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
 public class ItemService {
-    final ItemRepository itemRepository;
-
-    public ItemService(ItemRepository itemRepository) {
-        this.itemRepository = itemRepository;
-    }
+    private final ItemRepository itemRepository;
+    private final EquivalencePointSystemService equivalencePointSystemService;
+    private final ItemEquivalencePointsService itemEquivalencePointsService;
+    private final CharacterService characterService;
 
     public List<Item> findAll(){
         return this.itemRepository.findAll();
@@ -24,6 +28,9 @@ public class ItemService {
     @Transactional
     public void save(Item item){
         this.itemRepository.save(item);
+        for (EquivalencePointSystem eps : equivalencePointSystemService.findAll()) {
+            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, eps));
+        }
     }
 
     public Optional<Item> findById(long id){
@@ -32,6 +39,13 @@ public class ItemService {
 
     @Transactional
     public void delete(Item item){
+        for (Character character: item.getOwnersList()){
+            character.getItemsList().remove(item);
+            characterService.save(character);
+        }
+        for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsService.findByItem(item)) {
+            itemEquivalencePointsService.delete(itemEquivalencePoints);
+        }
         this.itemRepository.delete(item);
     }
 
