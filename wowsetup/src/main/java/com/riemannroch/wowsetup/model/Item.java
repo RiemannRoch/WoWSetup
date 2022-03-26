@@ -1,11 +1,13 @@
 package com.riemannroch.wowsetup.model;
 
+import com.riemannroch.wowsetup.request.ItemRequest;
 import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,6 +45,26 @@ public class Item implements Serializable {
     @ManyToMany(mappedBy = "itemsList")
     @ToString.Exclude
     private List<Character> ownersList;
+
+    public Item(ItemRequest itemRequest) {
+        this.name = itemRequest.getName();
+        this.slotEnum =  itemRequest.getSlotEnum();
+        this.intellect = itemRequest.getIntellect();
+        this.stamina = itemRequest.getStamina();
+        this.agility = itemRequest.getAgility();
+        this.strength = itemRequest.getStrength();
+        this.spirit = itemRequest.getSpirit();
+        this.mp5 = itemRequest.getMp5();
+        this.attackPower = itemRequest.getAttackPower();
+        this.healingPower = itemRequest.getHealingPower();
+        this.spellPower = itemRequest.getSpellPower();
+        this.criticalRate = itemRequest.getCriticalRate();
+        this.spellCriticalRate = itemRequest.getSpellCriticalRate();
+        this.haste = itemRequest.getHaste();
+        this.spellHaste = itemRequest.getSpellHaste();
+        this.resilience = itemRequest.getResilience();
+        this.ownersList = new ArrayList<>();
+    }
 
     public double equivalencePoints(EquivalencePointSystem equivalencePointSystem){
         return intellect * equivalencePointSystem.getIntellectWeight() +

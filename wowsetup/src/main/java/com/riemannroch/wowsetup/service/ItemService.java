@@ -6,6 +6,7 @@ import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.model.ItemEquivalencePoints;
 import com.riemannroch.wowsetup.model.SlotEnum;
 import com.riemannroch.wowsetup.repository.ItemRepository;
+import com.riemannroch.wowsetup.request.ItemRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,20 +18,14 @@ import java.util.Optional;
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
-    private final EquivalencePointSystemService equivalencePointSystemService;
-    private final ItemEquivalencePointsService itemEquivalencePointsService;
-    private final CharacterService characterService;
+
 
     public List<Item> findAll(){
         return this.itemRepository.findAll();
     }
 
-    @Transactional
-    public void save(Item item){
-        this.itemRepository.save(item);
-        for (EquivalencePointSystem eps : equivalencePointSystemService.findAll()) {
-            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, eps));
-        }
+    public Item insert(ItemRequest itemRequest) {
+        return this.itemRepository.save(new Item(itemRequest));
     }
 
     public Optional<Item> findById(long id){
@@ -38,7 +33,15 @@ public class ItemService {
     }
 
     @Transactional
-    public void delete(Item item){
+    public void update(Item item, EquivalencePointSystemService equivalencePointSystemService, ItemEquivalencePointsService itemEquivalencePointsService){
+        this.itemRepository.save(item);
+        for (EquivalencePointSystem eps : equivalencePointSystemService.findAll()) {
+            itemEquivalencePointsService.save(new ItemEquivalencePoints(item, eps));
+        }
+    }
+
+    @Transactional
+    public void delete(Item item, CharacterService characterService, ItemEquivalencePointsService itemEquivalencePointsService){
         for (Character character: item.getOwnersList()){
             character.getItemsList().remove(item);
             characterService.save(character);
@@ -47,9 +50,5 @@ public class ItemService {
             itemEquivalencePointsService.delete(itemEquivalencePoints);
         }
         this.itemRepository.delete(item);
-    }
-
-    public List<Item> findBySlot(SlotEnum slotEnum) {
-        return this.itemRepository.findBySlotEnum(slotEnum);
     }
 }

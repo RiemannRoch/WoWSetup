@@ -15,15 +15,14 @@ import java.util.Optional;
 @Service
 public class EquivalencePointSystemService {
     private final EquivalencePointSystemRepository equivalencePointSystemRepository;
-    private final ItemService itemService;
-    private final ItemEquivalencePointsService itemEquivalencePointsService;
+
 
     public List<EquivalencePointSystem> findAll(){
         return equivalencePointSystemRepository.findAll();
     }
 
     @Transactional
-    public void save(EquivalencePointSystem equivalencePointSystem) {
+    public void save(EquivalencePointSystem equivalencePointSystem, ItemService itemService, ItemEquivalencePointsService itemEquivalencePointsService) {
         equivalencePointSystemRepository.save(equivalencePointSystem);
         for (Item item : itemService.findAll()) {
             itemEquivalencePointsService.save(new ItemEquivalencePoints(item, equivalencePointSystem));
@@ -40,7 +39,7 @@ public class EquivalencePointSystemService {
     }
 
     @Transactional
-    public void delete(EquivalencePointSystem equivalencePointSystem) {
+    public void delete(EquivalencePointSystem equivalencePointSystem, ItemEquivalencePointsService itemEquivalencePointsService) {
         for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsService.findByEps(equivalencePointSystem)){
             itemEquivalencePointsService.delete(itemEquivalencePoints);
         }

@@ -14,15 +14,9 @@ import java.util.Optional;
 @Service
 public class CharacterService {
     final CharacterRepository characterRepository;
-    final ItemService itemService;
 
     public List<Character> findAll(){
         return this.characterRepository.findAll();
-    }
-
-    @Transactional
-    public Character save(Character character){
-        return this.characterRepository.save(character);
     }
 
     public Optional<Character> findByName(String name) {
@@ -30,14 +24,18 @@ public class CharacterService {
     }
 
     @Transactional
-    public void deleteByName(String name) {
-        characterRepository.deleteByName(name);
+    public Character save(Character character){
+        return this.characterRepository.save(character);
     }
 
-    public void delete(Character character) {
+    @Transactional
+    public void delete(Character character,
+                       ItemService itemService,
+                       EquivalencePointSystemService equivalencePointSystemService,
+                       ItemEquivalencePointsService itemEquivalencePointsService) {
         for (Item item : character.getItemsList()) {
             item.getOwnersList().remove(character);
-            itemService.save(item);
+            itemService.update(item,equivalencePointSystemService, itemEquivalencePointsService);
         }
         characterRepository.delete(character);
     }

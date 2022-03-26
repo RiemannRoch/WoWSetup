@@ -7,6 +7,7 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +38,7 @@ public class Character implements Serializable {
 
     public Character(CharacterRequest characterRequest){
         this.name = characterRequest.getName();
+        this.itemsList = new ArrayList<>();
     }
 
     @Override

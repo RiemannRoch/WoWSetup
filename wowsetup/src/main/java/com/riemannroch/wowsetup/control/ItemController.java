@@ -3,10 +3,7 @@ package com.riemannroch.wowsetup.control;
 import com.riemannroch.wowsetup.model.*;
 import com.riemannroch.wowsetup.model.Character;
 import com.riemannroch.wowsetup.request.ItemRequest;
-import com.riemannroch.wowsetup.service.CharacterService;
-import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
-import com.riemannroch.wowsetup.service.ItemEquivalencePointsService;
-import com.riemannroch.wowsetup.service.ItemService;
+import com.riemannroch.wowsetup.service.*;
 import com.riemannroch.wowsetup.view.character.CharacterView;
 import com.riemannroch.wowsetup.view.item.ItemCompleteView;
 import com.riemannroch.wowsetup.view.item.ItemView;
@@ -47,22 +44,20 @@ public class ItemController {
     @Operation(summary = "Insert new item")
     @PostMapping
     public ItemCompleteView addItem(@RequestBody ItemRequest itemRequest) {
-        Item item = new Item();
-        BeanUtils.copyProperties(itemRequest,item);
-        item.setOwnersList(new ArrayList<>());
-        itemService.save(item);
-        return new ItemCompleteView(item);
+        return new ItemCompleteView(itemService.insert(itemRequest));
     }
 
     //Tested
     @Operation(summary = "Update item's attributes")
     @PutMapping("/{idItem}")
-    public ItemCompleteView updateItem(@RequestBody Item newItem, @PathVariable(value = "idItem") long idItem) {
+    public ItemCompleteView updateItem(@RequestBody ItemRequest itemRequest, @PathVariable(value = "idItem") long idItem) {
         Item item = itemService.findById(idItem)
                 .orElseThrow(() -> notFound(idItem));
+
+        Item newItem = new Item(itemRequest);
         newItem.setIdItem(idItem);
         newItem.setOwnersList(item.getOwnersList());
-        itemService.save(newItem);
+        itemService.update(newItem, equivalencePointSystemService, itemEquivalencePointsService);
         return new ItemCompleteView(newItem);
     }
 
@@ -72,7 +67,7 @@ public class ItemController {
     public void deleteItem(@PathVariable(value = "idItem") long idItem) {
         Item item = itemService.findById(idItem)
                 .orElseThrow(() -> notFound(idItem));
-        itemService.delete(item);
+        itemService.delete(item, characterService, itemEquivalencePointsService);
     }
 
     //Tested

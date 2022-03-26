@@ -3,9 +3,7 @@ package com.riemannroch.wowsetup.control;
 import com.riemannroch.wowsetup.model.Character;
 import com.riemannroch.wowsetup.model.Item;
 import com.riemannroch.wowsetup.request.CharacterRequest;
-import com.riemannroch.wowsetup.service.CharacterItemService;
-import com.riemannroch.wowsetup.service.CharacterService;
-import com.riemannroch.wowsetup.service.ItemService;
+import com.riemannroch.wowsetup.service.*;
 import com.riemannroch.wowsetup.view.character.CharacterView;
 import com.riemannroch.wowsetup.view.character.CharacterWithItemsView;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +21,8 @@ public class CharacterController {
     final CharacterService characterService;
     final ItemService itemService;
     final CharacterItemService characterItemService;
+    final EquivalencePointSystemService equivalencePointSystemService;
+    final ItemEquivalencePointsService itemEquivalencePointsService;
 
     public static NotFoundException notFound(String name) {
         return new NotFoundException("Character not found for name: " + name);
@@ -69,7 +69,7 @@ public class CharacterController {
     public void deleteCharacter(@PathVariable("name") String name) {
         Character character = characterService.findByName(name)
                 .orElseThrow(() -> notFound(name));
-        characterService.delete(character);
+        characterService.delete(character, itemService, equivalencePointSystemService, itemEquivalencePointsService);
     }
 
     //Tested
@@ -83,7 +83,7 @@ public class CharacterController {
         Item item = itemService.findById(idItem)
                 .orElseThrow(() -> ItemController.notFound(idItem));
 
-        characterItemService.addRelation(character, item);
+        characterItemService.addRelation(character, item, characterService, itemService, equivalencePointSystemService, itemEquivalencePointsService);
     }
 
     //Tested
@@ -96,6 +96,6 @@ public class CharacterController {
         Item item = itemService.findById(idItem)
                 .orElseThrow(() -> ItemController.notFound(idItem));
 
-        characterItemService.removeRelation(character, item);
+        characterItemService.removeRelation(character, item, characterService, itemService, equivalencePointSystemService, itemEquivalencePointsService);
     }
 }

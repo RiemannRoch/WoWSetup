@@ -2,30 +2,22 @@ package com.riemannroch.wowsetup.control;
 
 import com.riemannroch.wowsetup.model.*;
 import com.riemannroch.wowsetup.model.Character;
-import com.riemannroch.wowsetup.service.CharacterService;
-import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
-import com.riemannroch.wowsetup.service.ItemEquivalencePointsService;
-import com.riemannroch.wowsetup.service.ItemService;
+import com.riemannroch.wowsetup.service.*;
 import com.riemannroch.wowsetup.view.item.ItemView;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/wowsetup/bis/{name}/{idEps}")
 public class BestInSlotController {
     private final EquivalencePointSystemService equivalencePointSystemService;
     private final CharacterService characterService;
-    private final ItemEquivalencePointsService itemEquivalencePointsService;
     private final ItemService itemService;
-
-    public BestInSlotController(EquivalencePointSystemService equivalencePointSystemService, CharacterService characterService, ItemEquivalencePointsService itemEquivalencePointsService, ItemService itemService) {
-        this.equivalencePointSystemService = equivalencePointSystemService;
-        this.characterService = characterService;
-        this.itemEquivalencePointsService = itemEquivalencePointsService;
-        this.itemService = itemService;
-    }
+    private final ItemEquivalencePointsService itemEquivalencePointsService;
 
     //Tested
     @GetMapping

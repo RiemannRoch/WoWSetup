@@ -41,7 +41,7 @@ public class EquivalencePointSystemController {
     @Operation(summary = "Insert new equivalence point system")
     @PostMapping
     public EquivalencePointSystemView addEquivalencePointSystem(@RequestBody EquivalencePointSystem equivalencePointSystem) {
-        equivalencePointSystemService.save(equivalencePointSystem);
+        equivalencePointSystemService.save(equivalencePointSystem, itemService, itemEquivalencePointsService);
         return new EquivalencePointSystemView(equivalencePointSystem);
     }
 
@@ -62,7 +62,7 @@ public class EquivalencePointSystemController {
                 .orElseThrow(() -> notFound(idEquivalencePointSystem));
 
         equivalencePointSystem.setIdEquivalencePointSystem(idEquivalencePointSystem);
-        equivalencePointSystemService.save(equivalencePointSystem);
+        equivalencePointSystemService.save(equivalencePointSystem, itemService, itemEquivalencePointsService);
         return new EquivalencePointSystemView(equivalencePointSystem);
     }
 
@@ -72,6 +72,6 @@ public class EquivalencePointSystemController {
     public void deleteEquivalencePointSystem(@PathVariable("idEquivalencePointSystem") long idEquivalencePointSystem) {
         EquivalencePointSystem eps = equivalencePointSystemService.findById(idEquivalencePointSystem)
                 .orElseThrow(() -> notFound(idEquivalencePointSystem));
-        equivalencePointSystemService.delete(eps);
+        equivalencePointSystemService.delete(eps, itemEquivalencePointsService);
     }
 }
