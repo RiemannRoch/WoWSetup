@@ -1,9 +1,13 @@
 package com.riemannroch.wowsetup.control;
 
-import com.riemannroch.wowsetup.model.*;
 import com.riemannroch.wowsetup.model.Character;
-import com.riemannroch.wowsetup.service.*;
-import com.riemannroch.wowsetup.view.item.ItemView;
+import com.riemannroch.wowsetup.model.*;
+import com.riemannroch.wowsetup.service.CharacterService;
+import com.riemannroch.wowsetup.service.EquivalencePointSystemService;
+import com.riemannroch.wowsetup.service.ItemEquivalencePointsService;
+import com.riemannroch.wowsetup.service.ItemService;
+import com.riemannroch.wowsetup.view.itemequivalencepoints.ItemEquivalencePointsView;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,46 +24,52 @@ public class BestInSlotController {
     private final ItemEquivalencePointsService itemEquivalencePointsService;
 
     //Tested
+    @Operation(summary = "Return the Best in Slot List for a given character and eps")
     @GetMapping
-    public List<ItemView> getBisList(@PathVariable String name, @PathVariable Long idEps, @RequestParam(defaultValue = "false") boolean all) {
+    public List<ItemEquivalencePointsView> getBisList(@PathVariable String name, @PathVariable Long idEps, @RequestParam(defaultValue = "false") boolean all) {
         Character character = characterService.findByName(name)
                 .orElseThrow(() -> CharacterController.notFound(name));
         EquivalencePointSystem eps = equivalencePointSystemService.findById(idEps)
                 .orElseThrow(() -> EquivalencePointSystemController.notFound(idEps));
 
-        List<Item> list = all ? itemService.findAll() : character.getItemsList();
+        List<Item> source = all ? itemService.findAll() : character.getItemsList();
 
-        List<Item> bisList = new ArrayList<>();
+        List<ItemEquivalencePoints> bisList = new ArrayList<>();
         for (SlotEnum slot : SlotEnum.values()) {
             List<Item> itemsForSlot = new ArrayList<>();
-            for (Item item : list) {
+            for (Item item : source) {
                 if (item.getSlotEnum().equals(slot)) {
                     itemsForSlot.add(item);
                 }
             }
-            Item bisItem = new Item();
-            bisItem.setSlotEnum(slot);
+            ItemEquivalencePoints bisItem = new ItemEquivalencePoints();
+            Item noSlotItem = new Item();
+            noSlotItem.setSlotEnum(slot);
+            bisItem.setItem(noSlotItem);
             double bisEp = 0;
             for (Item item : itemsForSlot) {
                 assert itemEquivalencePointsService
                         .findById(new ItemEquivalencePointsKey(item.getIdItem(), eps.getIdEquivalencePointSystem()))
                         .isPresent();
-                double ep = itemEquivalencePointsService
-                        .findById(new ItemEquivalencePointsKey(item.getIdItem(), eps.getIdEquivalencePointSystem()))
-                        .get()
-                        .getEquivalencePoints();
+
+                ItemEquivalencePoints itemEquivalencePoints = itemEquivalencePointsService
+                        .findById(new ItemEquivalencePointsKey(item.getIdItem(), eps.getIdEquivalencePointSystem())).get();
+
+                double ep = itemEquivalencePoints.getEquivalencePoints();
+
                 if (ep > bisEp) {
-                    bisItem = item;
+                    bisItem = itemEquivalencePoints;
                 }
             }
             bisList.add(bisItem);
         }
-        return ItemView.listOf(bisList);
+        return ItemEquivalencePointsView.listOf(bisList);
     }
 
     //Tested
+    @Operation(summary = "Return the best item given character, eps and slot")
     @GetMapping("/{slot}")
-    public List<ItemView> getBisListForSlot(
+    public List<ItemEquivalencePointsView> getBisListForSlot(
             @PathVariable String name,
             @PathVariable Long idEps,
             @PathVariable SlotEnum slot,
@@ -71,15 +81,15 @@ public class BestInSlotController {
 
         List<ItemEquivalencePoints> itemEquivalencePointsList = itemEquivalencePointsService.findByEpsAndOrderByEquivalencePoints(eps);
 
-        List<Item> bisList = new ArrayList<>();
+        List<ItemEquivalencePoints> bisList = new ArrayList<>();
 
         for (ItemEquivalencePoints itemEquivalencePoints : itemEquivalencePointsList) {
             Item item = itemEquivalencePoints.getItem();
-            if (item.getSlotEnum().equals(slot)) {
-                if (all || character.getItemsList().contains(item)) bisList.add(item);
+            if (itemEquivalencePoints.getItem().getSlotEnum().equals(slot)) {
+                if (all || character.getItemsList().contains(item)) bisList.add(itemEquivalencePoints);
             }
         }
 
-        return ItemView.listOf(bisList);
+        return ItemEquivalencePointsView.listOf(bisList);
     }
 }
