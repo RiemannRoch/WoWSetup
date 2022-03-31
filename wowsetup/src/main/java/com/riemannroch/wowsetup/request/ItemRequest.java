@@ -23,4 +23,6 @@ public class ItemRequest {
     private int haste;
     private int spellHaste;
     private int resilience;
+    private int hit;
+    private int spellHit;
 }

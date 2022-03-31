@@ -41,6 +41,8 @@ public class Item implements Serializable {
     private int haste;
     private int spellHaste;
     private int resilience;
+    private int hit;
+    private int spellHit;
 
     @ManyToMany(mappedBy = "itemsList")
     @ToString.Exclude
@@ -63,6 +65,8 @@ public class Item implements Serializable {
         this.haste = itemRequest.getHaste();
         this.spellHaste = itemRequest.getSpellHaste();
         this.resilience = itemRequest.getResilience();
+        this.hit = itemRequest.getHit();
+        this.spellHit = itemRequest.getSpellHit();
         this.ownersList = new ArrayList<>();
     }
 
